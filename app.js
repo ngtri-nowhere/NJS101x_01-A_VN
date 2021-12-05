@@ -9,6 +9,14 @@ const myHttp = require('http'); // imort a file, hoặc lấy path đến tâ
 const server = myHttp.createServer((req, res) => {
     console.log(req.url, req.method, req.headers); // show request
     //  process.exit(); thoát khỏi quá trình loop, huỷ đăng ký Listener.
+    const url = req.url;
+    if (url === "/") {
+        res.write('<html>');
+        res.write('<head><title>Enter</title></head>');
+        res.write('<body><form action="/messageNew" method="POST"><input type="text" name="message"><button type="submit">SEND</button></input></form></body>');
+        res.write('</html>'); //method là POST nên nó sẽ gữi
+        return res.end(); // để kết thúc respones,nếu không nó sẽ response lệnh ở dưới tiếp
+    }
     res.setHeader('Content-Type', 'text/html'); // set giá trị header 
     res.write('<html>');
     res.write('<head><title>My First Page</title></head>');
