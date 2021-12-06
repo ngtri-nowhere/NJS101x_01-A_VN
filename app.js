@@ -21,11 +21,27 @@ const server = myHttp.createServer((req, res) => {
         return res.end(); // để kết thúc respones,nếu không nó sẽ response lệnh ở dưới tiếp
     }
     if (url === "/message" && method === "POST") {
-        fs.writeFileSync("message.txt", "DUMMY"); // tạo tập tin
+        const body = []; // không thể thây đổi dữ liệu với const
+        // nhưng push thì được, nó thây đổi phía sau.
+        req.on('data', (chunk) => {
+            console.log(chunk);
+            body.push(chunk);
+        });
+
+        req.on('end', () => {
+            const parseBody = Buffer.concat(body).toString();
+            const message = parseBody.split('=')[1];
+            fs.writeFileSync("message.txt", message); // tạo tập tin
+            console.log(parseBody);
+        });
+        // req.on("data"); // req on để nghe các sự kiện
+        // kích hoạt bất cứ khi nào một đạon mới sẵn sàng được đọc
+
         // có thể làm với 2 bước điều hướng có status
         res.statusCode = 302;
         res.setHeader("Location", "/");
         return res.end(); // luôn sử dụng kết thức để ngưng lệnh.
+
         // res.writeHead(302,{
         //     "Content-Type": "text/plain", "/"
         // }); // writeHead cho phép ta viết một số *(meta information) trong một lần và sau đó ta đặt trạng thái code(302,304,300.v.v.) và sau đó ta truyền một object javascript
