@@ -7,9 +7,12 @@ const myHttp = require('http'); // imort a file, hoặc lấy path đến tâ
 //  có thể tạo một funcion thẳng để dễ nhìn
 //  hoặc là một function mũi tên để gọn
 // }
-const route = require('./route'); // vì ta nhập vào không phải là một module toàn cục.
+// vì ta nhập vào không phải là một module toàn cục.
 // nên cần chỉ rõ đường dẫn. đây là một lõi file tuỳ chĩnh
-console.log(route.someText);
-const server = myHttp.createServer(route.handler);
+const express = require('express');
+
+const app = express();
+
+const server = myHttp.createServer(app);
 
 server.listen(3000);
