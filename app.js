@@ -26,8 +26,11 @@ const shopRoutes = require('./routes/shop');
 app.use(bodyParser.urlencoded({ extended: false })) // nên tắt mặc định
 
 app.use(adminRoutes);
-
 app.use(shopRoutes);
+
+app.use((req, res, next) => {
+    res.status(404).send('<h1>Page Not Found</h1>');
+});
 
 app.listen(3000)
 // const server = myHttp.createServer(app);
