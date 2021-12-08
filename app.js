@@ -19,32 +19,15 @@ const app = express(); // express là một hàm ở đây
 //     console.log("In the middleware");
 //     next();//next cho phép request được tiếp tục đến middleware tiếp theo
 // });
+const adminRoutes = require('./routes/admin');
+
+const shopRoutes = require('./routes/shop');
+
 app.use(bodyParser.urlencoded({ extended: false })) // nên tắt mặc định
 
-app.use('/', (req, res, next) => {
-    console.log("This is first middleware,and it always runs");
-    next();
-});
+app.use(adminRoutes);
 
-app.use('/add-product', (req, res, next) => {
-    // mặc định setHeader của express là text/html
-    res.send('<form action="/product" method="POST"><input type="text" name="title"><button type="submit">Add Product</button></form>');
-});
-
-app.post('/product', (req, res, next) => { // .get giống như use 
-    //có thể xài một path khoặc không nhưng nó chỉ kích hoạt 
-    // những request sắp tới. 
-    //post cũng tương tự nhưng sẽ làm việc với request post
-    //sử dụng get,post,delete,patch,put để lọc chúng,
-    console.log(req.body);
-    res.redirect('/'); // thuộc tính redirec điều hướng route
-})
-
-app.use('/', (req, res, next) => {
-    console.log("In last middleware");
-    // mặc định setHeader của express là text/html
-    res.send('<h1>Hello From Express</h1>');
-});
+app.use(shopRoutes);
 
 app.listen(3000)
 // const server = myHttp.createServer(app);
