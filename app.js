@@ -19,6 +19,8 @@ app.use((req, res, next) => {
 });
 app.use((req, res, next) => {
     console.log("In another middleware");
+    // mặc định setHeader của express là text/html
+    res.send('<h1>Hello From Express</h1>');
 });
 
 
