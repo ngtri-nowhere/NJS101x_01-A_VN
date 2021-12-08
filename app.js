@@ -1,4 +1,4 @@
-const myHttp = require('http'); // imort a file, hoặc lấy path đến tập tin khác.
+//const myHttp = require('http'); // imort a file, hoặc lấy path đến tập tin khác.
 // package được đặg tên là fs .
 // fs cho phép ta làm việc với hệ thóng tập tin
 // ở đây ta có moudle có sẳn là http,
@@ -13,17 +13,28 @@ const myHttp = require('http'); // imort a file, hoặc lấy path đến tâ
 const express = require('express');
 const app = express();
 // thuộc tính use của express cho ta thêm một hàm trung gian mới
-app.use((req, res, next) => {
-    console.log("In the middleware");
-    next();//next cho phép request được tiếp tục đến middleware tiếp theo
+// app.use((req, res, next) => {
+//     console.log("In the middleware");
+//     next();//next cho phép request được tiếp tục đến middleware tiếp theo
+// });
+app.use('/', (req, res, next) => {
+    console.log("This is first middleware,and it always runs");
+    next();
 });
-app.use((req, res, next) => {
+
+app.use('/add-product', (req, res, next) => {
+    console.log("In another middleware");
+    // mặc định setHeader của express là text/html
+    res.send('<h1>The "Add Product"</h1>');
+});
+
+app.use('/', (req, res, next) => {
     console.log("In another middleware");
     // mặc định setHeader của express là text/html
     res.send('<h1>Hello From Express</h1>');
 });
 
+app.listen(3000)
+// const server = myHttp.createServer(app);
 
-const server = myHttp.createServer(app);
-
-server.listen(3000);
+// server.listen(3000);
