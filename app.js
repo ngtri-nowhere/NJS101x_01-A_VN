@@ -31,7 +31,11 @@ app.use('/add-product', (req, res, next) => {
     res.send('<form action="/product" method="POST"><input type="text" name="title"><button type="submit">Add Product</button></form>');
 });
 
-app.use('/product', (req, res, next) => {
+app.post('/product', (req, res, next) => { // .get giống như use 
+    //có thể xài một path khoặc không nhưng nó chỉ kích hoạt 
+    // những request sắp tới. 
+    //post cũng tương tự nhưng sẽ làm việc với request post
+    //sử dụng get,post,delete,patch,put để lọc chúng,
     console.log(req.body);
     res.redirect('/'); // thuộc tính redirec điều hướng route
 })
