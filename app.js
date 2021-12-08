@@ -28,7 +28,8 @@ const shopRoutes = require('./routes/shop');
 const rootDir = require('./helper/path');
 
 app.use(bodyParser.urlencoded({ extended: false })) // nên tắt mặc định
-
+app.use(express.static(path.join(__dirname, 'public'))); // cấp quyền truy cập
+//  đăng ký các thư mục tĩnh và nó sẽ chuyển 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
