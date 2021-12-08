@@ -11,25 +11,33 @@
 // nên cần chỉ rõ đường dẫn. đây là một lõi file tuỳ chĩnh
 
 const express = require('express');
-const app = express();
+const bodyParser = require('body-parser');
+
+const app = express(); // express là một hàm ở đây
 // thuộc tính use của express cho ta thêm một hàm trung gian mới
 // app.use((req, res, next) => {
 //     console.log("In the middleware");
 //     next();//next cho phép request được tiếp tục đến middleware tiếp theo
 // });
+app.use(bodyParser.urlencoded({ extended: false })) // nên tắt mặc định
+
 app.use('/', (req, res, next) => {
     console.log("This is first middleware,and it always runs");
     next();
 });
 
 app.use('/add-product', (req, res, next) => {
-    console.log("In another middleware");
     // mặc định setHeader của express là text/html
-    res.send('<h1>The "Add Product"</h1>');
+    res.send('<form action="/product" method="POST"><input type="text" name="title"><button type="submit">Add Product</button></form>');
 });
 
+app.use('/product', (req, res, next) => {
+    console.log(req.body);
+    res.redirect('/'); // thuộc tính redirec điều hướng route
+})
+
 app.use('/', (req, res, next) => {
-    console.log("In another middleware");
+    console.log("In last middleware");
     // mặc định setHeader của express là text/html
     res.send('<h1>Hello From Express</h1>');
 });
