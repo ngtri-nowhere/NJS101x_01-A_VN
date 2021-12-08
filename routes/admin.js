@@ -1,12 +1,14 @@
 const path = require('path');
 
-const express = require('express')
+const express = require('express');
+
+const rootDir = require('../helper/path');
 
 const router = express.Router(); // tham số Router .
 // /admin/add-product => GET
 router.get('/add-product', (req, res, next) => {
     // mặc định setHeader của express là text/html
-    res.sendFile(path.join(__dirname, '../', 'views', 'add-product.html'));
+    res.sendFile(path.join(rootDir, 'views', 'add-product.html'));
 });
 // /admin/add-product => POST
 router.post('/add-product', (req, res, next) => { // .get giống như use 
