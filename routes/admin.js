@@ -19,7 +19,7 @@ router.post('/add-product', (req, res, next) => { // .get giống như use
     // những request sắp tới. 
     //post cũng tương tự nhưng sẽ làm việc với request post
     //sử dụng get,post,delete,patch,put để lọc chúng,
-    products.push({title: req.body.title});
+    products.push({ title: req.body.title });
     console.log(req.body);
     res.redirect('/'); // thuộc tính redirec điều hướng route
 })

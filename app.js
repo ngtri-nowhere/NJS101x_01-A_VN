@@ -21,6 +21,9 @@ const app = express(); // express là một hàm ở đây
 //     console.log("In the middleware");
 //     next();//next cho phép request được tiếp tục đến middleware tiếp theo
 // });
+app.set('view engine', 'pug');
+app.set('views', 'views');
+
 const adminData = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
