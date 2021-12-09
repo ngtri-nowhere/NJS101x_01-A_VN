@@ -1,12 +1,15 @@
 const path = require('path'); // sử dụng module này 
 
 const rootDir = require('../helper/path');
+const adminData = require("./admin");
 
 const express = require('express')
+
 
 const router = express.Router();
 
 router.get('/', (req, res, next) => {
+    console.log('shop.js',adminData.products);
     console.log("In Route shop middleware");
     // mặc định setHeader của express là text/html
     res.sendFile(path.join(rootDir, 'views', 'shop.html')); //join đường dẫn. 

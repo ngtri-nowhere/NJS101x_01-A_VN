@@ -21,8 +21,7 @@ const app = express(); // express là một hàm ở đây
 //     console.log("In the middleware");
 //     next();//next cho phép request được tiếp tục đến middleware tiếp theo
 // });
-const adminRoutes = require('./routes/admin');
-
+const adminData = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
 const rootDir = require('./helper/path');
@@ -30,7 +29,8 @@ const rootDir = require('./helper/path');
 app.use(bodyParser.urlencoded({ extended: false })) // nên tắt mặc định
 app.use(express.static(path.join(__dirname, 'public'))); // cấp quyền truy cập
 //  đăng ký các thư mục tĩnh và nó sẽ chuyển 
-app.use('/admin', adminRoutes);
+
+app.use('/admin', adminData.routes);
 app.use(shopRoutes);
 
 app.use((req, res, next) => {
