@@ -12,7 +12,7 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const expressHbs = require('express-handlebars');
+// const expressHbs = require('express-handlebars'); // ở đây cần khai báo cài đặt
 
 const path = require('path');
 
@@ -24,12 +24,7 @@ const app = express(); // express là một hàm ở đây
 // });
 
 // còn handlebars thì không, nên ta sử dụng engin để gọi nó
-app.engine('hbs', expressHbs({
-    layoutsDir: 'views/layouts/',
-    defaultLayout: 'main-layout',
-     extname: 'hbs'
-}));
-app.set('view engine', 'hbs'); //pug là một dạng thích hợp, nên sử dụng set.
+app.set('view engine', 'ejs'); //pug là một dạng thích hợp, nên sử dụng set.
 app.set('views', 'views');
 
 const adminData = require('./routes/admin');

@@ -17,7 +17,6 @@ router.get('/add-product', (req, res, next) => {
         formsCSS: true,
         activeProduct: true,
         productCSS: true,
-
     });
 });
 // /admin/add-product => POST
