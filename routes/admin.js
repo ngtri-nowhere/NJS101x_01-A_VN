@@ -11,7 +11,14 @@ const products = [];
 // /admin/add-product => GET
 router.get('/add-product', (req, res, next) => {
     // mặc định setHeader của express là text/html
-    res.render('add-product', { pageTitle: 'Add Product', path: '/admin/add-product' });
+    res.render('add-product', {
+        pageTitle: 'Add Product',
+        path: '/admin/add-product',
+        formsCSS: true,
+        activeProduct: true,
+        productCSS: true,
+
+    });
 });
 // /admin/add-product => POST
 router.post('/add-product', (req, res, next) => { // .get giống như use 

@@ -24,7 +24,11 @@ const app = express(); // express là một hàm ở đây
 // });
 
 // còn handlebars thì không, nên ta sử dụng engin để gọi nó
-app.engine('hbs', expressHbs());
+app.engine('hbs', expressHbs({
+    layoutsDir: 'views/layouts/',
+    defaultLayout: 'main-layout',
+     extname: 'hbs'
+}));
 app.set('view engine', 'hbs'); //pug là một dạng thích hợp, nên sử dụng set.
 app.set('views', 'views');
 
