@@ -12,6 +12,7 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const expressHbs = require('express-handlebars');
 
 const path = require('path');
 
@@ -21,7 +22,10 @@ const app = express(); // express là một hàm ở đây
 //     console.log("In the middleware");
 //     next();//next cho phép request được tiếp tục đến middleware tiếp theo
 // });
-app.set('view engine', 'pug');
+
+// còn handlebars thì không, nên ta sử dụng engin để gọi nó
+app.engine('hbs', expressHbs());
+app.set('view engine', 'hbs'); //pug là một dạng thích hợp, nên sử dụng set.
 app.set('views', 'views');
 
 const adminData = require('./routes/admin');
