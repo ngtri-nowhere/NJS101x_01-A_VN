@@ -27,7 +27,7 @@ const app = express(); // express là một hàm ở đây
 app.set('view engine', 'ejs'); //pug là một dạng thích hợp, nên sử dụng set.
 app.set('views', 'views');
 
-const adminData = require('./routes/admin');
+const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
 const rootDir = require('./helper/path');
@@ -36,7 +36,7 @@ app.use(bodyParser.urlencoded({ extended: false })) // nên tắt mặc địn
 app.use(express.static(path.join(__dirname, 'public'))); // cấp quyền truy cập
 //  đăng ký các thư mục tĩnh và nó sẽ chuyển 
 
-app.use('/admin', adminData.routes);
+app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
 app.use((req, res, next) => {
