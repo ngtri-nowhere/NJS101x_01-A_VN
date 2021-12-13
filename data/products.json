@@ -1,9 +1,1 @@
-[
-    {
-        "id": "123246",
-        "title": "A Book",
-        "imageUrl": "https://www.publicdomainpictures.net/pictures/10000/velka/1-1210009435EGmE.jpg",
-        "description": "This is an awesome book!",
-        "price": "19"
-    }
-]
+[{"id":"123246","title":"A Book","imageUrl":"https://www.publicdomainpictures.net/pictures/10000/velka/1-1210009435EGmE.jpg","description":"This is an awesome book!","price":"19"},{"title":"beauiful","imageUrl":"https://i1-vnexpress.vnecdn.net/2016/02/27/27-b1-a1-8891-1456548756.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=6oHS1U0JXkIyFlVGX9EvLw","description":"verry beautiful","price":"20","id":"0.0946109323138169"}]
