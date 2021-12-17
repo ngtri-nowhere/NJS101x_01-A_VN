@@ -49,10 +49,10 @@ module.exports = class Cart {
         return;
       }
       const productQty = product.qty;
-      updatedCart.products = updatedCart.producs.filter(prod => prod.id !== id);
+      updatedCart.products = updatedCart.products.filter(prod => prod.id !== id);
 
       updatedCart.totalPrice = updatedCart.totalPrice - productPrice * productQty;
-      fs.writeFile(p, JSON.stringify(cart), err => {
+      fs.writeFile(p, JSON.stringify(updatedCart), err => {
         console.log(err);
       });
     });
