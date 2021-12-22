@@ -13,25 +13,24 @@ exports.getProducts = (req, res, next) => {
 
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;
-  Product.findAll({ where: { id: prodId } })
-    .then(products => {
-      res.render('shop/product-detail', {
-        product: products[0],
-        pageTitle: products[0].title,
-        path: '/products'
-      });
-    })
-    .catch(err => { console.log(err) });
-  // Product.findByPk(prodId)
-  //   .then(product => {
+  // Product.findAll({ where: { id: prodId } }) // vì find tât cả nên cần có phần tư con
+  //   .then(products => {
   //     res.render('shop/product-detail', {
-  //       product: product,
-  //       pageTitle: product.title,
+  //       product: products[0],
+  //       pageTitle: products[0].title,
   //       path: '/products'
   //     });
-  //   }).catch(err => { console.log(err) });
+  //   })
+  //   .catch(err => { console.log(err) });
+  Product.findByPk(prodId) // không có phần tử vì tìm một thứ .
+    .then(product => {
+      res.render('shop/product-detail', {
+        product: product,
+        pageTitle: product.title,
+        path: '/products'
+      });
+    }).catch(err => { console.log(err) });
 };
-
 exports.getIndex = (req, res, next) => {
   Product.findAll().then(products => {
     res.render('shop/index', {
@@ -39,8 +38,7 @@ exports.getIndex = (req, res, next) => {
       pageTitle: 'Shop',
       path: '/'
     });
-  }).catch(err => { console.log(err) });
-
+  }).catch(err => { console.log(err)});
 };
 
 exports.getCart = (req, res, next) => {
