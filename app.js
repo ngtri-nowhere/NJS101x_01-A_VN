@@ -4,7 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const errorController = require('./controllers/error');
-const mongoConnect = require('./util/database');
+const mongoConnect = require('./util/database').mongoConnect;
 
 const app = express();
 
@@ -21,9 +21,10 @@ app.use((req, res, next) => {
   // User.findByPk(1)
   //   .then(user => {
   //     req.user = user;
-  //     next();
+  //     next();b
   //   })
   //   .catch(err => console.log(err));
+  next();
 });
 
 app.use('/admin', adminRoutes);
