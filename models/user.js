@@ -22,14 +22,14 @@ class User {
     //   return cp.id === product.id;
     // })
 
-
     const updatedCart = { items: [{ ...product, quantity: 1 }] };
     const db = getDb();
-    return db.collection('users')
-      .updateOne({ _id: new ObjectId(this._id) }, {
-        $set: { cart: updatedCart }
-      });
-
+    return db
+      .collection('users')
+      .updateOne(
+        { _id: new ObjectId(this._id) },
+        { $set: { cart: updatedCart } }
+      );
   }
 
   static findById(userId) {
@@ -43,4 +43,6 @@ class User {
       .catch(err => { console.log(err) });
   }
 }
+
+
 module.exports = User;
