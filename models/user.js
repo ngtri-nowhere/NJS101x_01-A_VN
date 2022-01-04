@@ -40,7 +40,7 @@ userSchema.methods.addToCart = function (product) {
     };
     // const updatedCart = { items: [{ productId: new ObjectId(product._id), quantity: newQuantity }] };
     this.cart = updatedCart;
-    return this.save()
+    return this.save();
 }
 
 module.exports = mongoose.model('User', userSchema)
