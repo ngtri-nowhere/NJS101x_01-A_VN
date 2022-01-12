@@ -1,0 +1,29 @@
+.edit__employee {
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    display:grid;
+}
+.form-control {
+    margin: 0.5rem;
+}
+.form-control label,
+.form-control input,
+.form-control p {
+    display: block;
+    width:100%;
+}
+.form-control p {
+    padding-left:20px;
+}
+
+.form-control input,
+.form-control p {
+    border:1px;
+    font: inherit;
+    border-radius: 2px;
+}
+.form-control input:focus,
+.form-control p:focus {
+    outline-color: #00672c;
+}

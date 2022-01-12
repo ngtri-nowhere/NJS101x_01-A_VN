@@ -1,0 +1,56 @@
+.container {
+    display:flex;
+    flex-direction:grid;
+    justify-content:center;
+}
+.status {
+    display:flex;
+   font-size:30px;
+}
+.status span {
+    color:red;
+    font-size:100px;
+}
+#location {
+    margin-bottom:20px;
+}
+/* display  */
+.diem__danhOn {
+    display:none;
+}
+.diem__danhOn p,
+.diem__danhOn button{
+    display:grid;
+}
+.batdau__lamviec { 
+    display:none;
+}
+.ket__thucOn {
+    display:none;
+}
+.ket__thucOn li {
+    list-style-type:none;
+}
+.ket__thucOn p, 
+.ket__thucOn ul {
+    display:grid;
+}
+.ket__thuc {
+    padding-left:10px;
+    padding-right:10px;
+}
+.nghi_phepOn {
+    display:none;
+}
+.nghi_phepOn label,
+.nghi_phepOn input {
+    display:grid;
+}
+.nghi_phepConLai {
+    display: none;
+}
+.form__checkin { 
+    display:flex;
+}
+/***/
+

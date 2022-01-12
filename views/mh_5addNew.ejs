@@ -1,0 +1,92 @@
+<%- include('./head.ejs') %>
+    <link rel="stylesheet" href="../css/mh_5.css">
+    </head>
+
+    <body>
+        <%- include('./navigation.ejs') %>
+            <main>
+                <form class="edit__employee" action="/addNew" method="POST">
+
+                    <div class="form-control">
+                        <label for="id" name="id" id="id">
+                            <h3>ID: </h3>
+                            <p>
+                                <% if(editing) { %>
+                                    <%= employee._id %>
+                                        <%} %>
+                            </p>
+                        </label>
+                    </div>
+                    <div class="form-control">
+                        <label for="name">
+                            <h3>Name: </h3>
+                            <p name="name" id="name">
+                                <% if(editing) { %>
+                                    <%= employee.name %>
+                                        <%} %>
+                            </p>
+                        </label>
+                    </div>
+                    <div class="form-control">
+                        <label for="doB">
+                            <h3>Date of Birth:</h3>
+                            <p name="doB" id="doB">
+                                <% if(editing) { %>
+                                    <%= employee.doB %>
+                                        <%} %>
+                            </p>
+                        </label>
+                    </div>
+                    <div class="form-control">
+                        <label for="salaryScale">
+                            <h3>Salary Scale:</h3>
+                            <p name="salaryScale" id="salaryScale"></p>
+                            <% if(editing) { %>
+                                <%= employee.salaryScale %>
+                                    <%} %>
+                                        </p>
+                        </label>
+                    </div>
+                    <div class="form-control">
+                        <label for="startDate">
+                            <h3>Start Date: </h3>
+                            <p name="startDate" id="startDate">
+                                <% if(editing) { %>
+                                    <%= employee.startDate %>
+                                        <%} %>
+                            </p>
+                        </label>
+                    </div>
+                    <div class="form-control">
+                        <label for="depart">
+                            <h3>Department: </h3>
+                            <p name="depart" id="depart">
+                                <% if(editing) { %>
+                                    <%= employee.depart %>
+                                        <%} %>
+                            </p>
+                        </label>
+                    </div>
+                    <div class="form-control">
+                        <label for="annualLeave">
+                            <h3>Anuual Leave: </h3>
+                            <p name="annualLeave" id="annualLeave"></p>
+                            <% if(editing) { %>
+                                <%= employee.annualLeave %>
+                                    <%} %>
+                                        </p>
+                        </label>
+                    </div>
+                    <div class="form-control">
+                        <label for="imageUrl">
+                            <h3>Image URL(Edit)</h3>
+                        </label>
+                        <input type="text" id="imageUrl" name="imageUrl" for="imageUrl"
+                            value="<% if(editing) { %> <%= employee.imageUrl %> <%} %>">
+                    </div>
+                    <input type="hidden" value="<%= employee._id %>" name="employeeId">
+                    <button class="btn" type="submit">
+                        Updated </button>
+                </form>
+            </main>
+            <%- include('./end.ejs') %>

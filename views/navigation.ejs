@@ -1,0 +1,35 @@
+<div class="backdrop"></div>
+<header class="main-header">
+    <button id="side-menu-toggle">Menu</button>
+    <nav class="main-header__nav">
+        <li class="main-header__item">
+            <a class="<%= path === '/' ? 'active' : '' %>" href="/">CHECKIN-OUT</a>
+        </li>
+        <li class="main-header__item">
+            <a class="<%= path === '/edit' ? 'active' : '' %>" href="/edit">EDIT EMPLOYEE</a>
+        </li>
+        <li class="main-header__item">
+            <a class="<%= path === '/search' ? 'active' : '' %>" href="/search">SEARCH</a>
+        </li>
+        <li class="main-header__item">
+            <a class="<%= path === '/covid' ? 'active' : '' %>" href="/covid">COVID HISTORY</a>
+        </li>
+    </nav>
+</header>
+
+<nav class="mobile-nav">
+    <ul class="mobile-nav__item-list">
+        <li class="mobile-nav__item">
+            <a class="<%= path === '/' ? 'active' : '' %>" href="/">Checkin-out</a>
+        </li>
+        <li class="mobile-nav__item">
+            <a class="<%= path === '/edit' ? 'active' : '' %>" href="/edit">Edit Employee</a>
+        </li>
+        <li class="mobile-nav__item">
+            <a class="<%= path === '/search' ? 'active' : '' %>" href="/search">Search</a>
+        </li>
+        <li class="mobile-nav__item">
+            <a class="<%= path === '/covid' ? 'active' : '' %>" href="/covid">Covid History</a>
+        </li>
+    </ul>
+</nav>

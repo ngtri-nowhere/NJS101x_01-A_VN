@@ -1,0 +1,75 @@
+<%- include('./head.ejs') %>
+    <link rel="stylesheet" href="../css/mh_1.css">
+    </head>
+
+    <body>
+        <%- include('./navigation.ejs') %>
+            <main>
+                <% for (let emp of prods) { %>
+                    <div class="container">
+                        <form class="form__checkin" action="/" method="POST">
+                            <div class="diem__danh">
+                                <h2 class="btn" id="diemDanh" class="btn__diemDanh">Điểm Danh</h2>
+                                <div class="diem__danhOn">
+                                    <p>Tên Nhân Viên:
+                                        <select name="nameEmploy" id="nameEmploy">
+                                            <option>
+                                                <%= emp.name %>
+                                            </option>
+                                        </select>
+                                    </p>
+                                    <input type="hidden" name="nameEmploy" value="<%= emp.name %>">
+                                    <input type="hidden" name="hourStart" value="<%= emp.now %>">
+                                    <label for="location">Làm Việc Tại</label>
+                                    <input type="text" value="Công Ty" name="location">
+                                    <button class="btn" type="submit" id="submitdiemDanh">Gữi Đi</button>
+                                </div>
+                                <div class="batdau__lamviec">
+                                    <p>Tên Nhân Viên: <%= emp.name %>
+                                    </p>
+                                    <p>Nơi Làm Việc: <%= emp.location %>
+                                    </p>
+                                    <p>Giờ Bắt Đầu: <%= emp.hourStart.getHours() %> giờ
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="ket__thuc">
+                                <h2 class="btn" id="ketThuc" type="submit">Kết Thúc Làm</h2>
+                                <div class="ket__thucOn">
+                                    <h3>Số Giờ Đã Làm Hôm Nay</h3>
+                                    <ul>
+                                        <li>Lượt bắt đầu: <%= emp.hourStart.getHours() %> giờ
+                                        </li>
+                                        <li>Lượt kết thúc: <%= emp.hourEnd.getHours() %> giờ
+                                        </li>
+                                        <li>Nơi Làm Việc: <%= emp.location%>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="nghi_phep">
+                                <h2 class="btn" id="nghiPhep">Đăng Ký Phép</h2>
+                                <div class="nghi_phepOn">
+                                    <label for="annualLeave">Chọn ngày</label>
+                                    <input type="date" id="annualLeave" name="annualLeave">
+                                    <label for="annualLeaveTime">Chọn Giờ</label>
+                                    <input type="number" id="annualLeaveTime" name="annualLeaveTime" min="1">
+                                    <label for="reasonLeaveTime">Lý Do</label>
+                                    <input type="textarea" id="reasonLeavveTime" name="reasonLeavveTime">
+                                    <button type="submit" class="btn" id="submitNghiPhep">Đăng Ký</button>
+                                </div>
+                                <div class="nghi_phepConLai">
+                                    <p>Số ngày nghĩ phép còn lại: </p>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="status">
+                        <h2>
+                            <span>.</span>Trạng thái làm việc(Status):
+                        </h2>
+                    </div>
+                    </form>
+                    <% } %>
+            </main>
+            <script src="../js/mh_1.js"></script>
+            <%- include('./end.ejs') %>
