@@ -42,6 +42,13 @@ app.use(csrfProtection);
 app.use(flash());
 
 app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
+
+app.use((req, res, next) => {
+  // throw new Error('Sync Dummy'); // 
   if (!req.session.user) {
     return next();
   }
@@ -51,16 +58,12 @@ app.use((req, res, next) => {
         return next();
       }
       req.user = user;
-      next();
+      next(new Error(err)); // sử dụng báo lỗi bên trong một call back
     })
-    .catch(err => { throw new Error(err) });
+    .catch(err => next());
 });
 
-app.use((req, res, next) => {
-  res.locals.isAuthenticated = req.session.isLoggedIn;
-  res.locals.csrfToken = req.csrfToken();
-  next();
-});
+
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
@@ -72,7 +75,14 @@ app.use(errorController.get404);
 
 app.use((error, req, res, next) => {
   // res.status(error.httpStatusCode).rende(./); có thể option này nhưng không cần thiết
-  res.redirect('/500')
+  // res.redirect('/500')
+  exports.get500 = (req, res, next) => {
+    res.status(500).render('500', {
+      pageTitle: 'Error',
+      path: '/500',
+      isAuthenticated: req.session.isLoggedIn
+    });
+  };
 })
 
 mongoose
