@@ -22,6 +22,15 @@ const store = new MongoDBStore({
 });
 const csrfProtection = csrf();
 
+const fileStorage = multer.diskStorage({ // thiếtt lập middleware multer.
+  destination: (req, file, cb) => {
+    cb(null, 'images');
+  },
+  filename: (req, file, cb) => {
+    cb(null, new Date().toISOString() + '-' + file.originalname)
+  }
+});
+
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
@@ -31,7 +40,7 @@ const authRoutes = require('./routes/auth');
 
 app.use(bodyParser.urlencoded({ extended: false })); // đây là phần mềm trung gian, với urlencoded sẽ phân tích dữ liệu về văn bản. url, string
 app.use(multer({
-  dest: 'images'
+  storage: fileStorage
 }).single('image'))
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(
