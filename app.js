@@ -22,22 +22,26 @@ const store = new MongoDBStore({
 });
 const csrfProtection = csrf();
 
-const fileStorage = multer.diskStorage({ // thiếtt lập middleware multer.
+const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'images');
   },
   filename: (req, file, cb) => {
-    cb(null, new Date().toISOString() + '-' + file.originalname)
+    cb(null, new Date().getTime() + '-' + file.originalname);
   }
 });
 
 const fileFilter = (req, file, cb) => {
-  if (file.mimeType === 'image/png' || file.mimeType === 'image/jpg' || file.mimeType === "image/jpeg") {
+  if (
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
+  ) {
     cb(null, true);
   } else {
-    cb(null, false)
+    cb(null, false);
   }
-}
+};
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -46,10 +50,10 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 
-app.use(bodyParser.urlencoded({ extended: false })); // đây là phần mềm trung gian, với urlencoded sẽ phân tích dữ liệu về văn bản. url, string
-app.use(multer({
-  storage: fileStorage, fileFilter: fileFilter
-}).single('image'))
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single('image')
+);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(
   session({
@@ -69,7 +73,7 @@ app.use((req, res, next) => {
 });
 
 app.use((req, res, next) => {
-  // throw new Error('Sync Dummy'); // 
+  // throw new Error('Sync Dummy');
   if (!req.session.user) {
     return next();
   }
@@ -79,12 +83,12 @@ app.use((req, res, next) => {
         return next();
       }
       req.user = user;
-      next(new Error(err)); // sử dụng báo lỗi bên trong một call back
+      next();
     })
-    .catch(err => next());
+    .catch(err => {
+      next(new Error(err));
+    });
 });
-
-
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
@@ -95,16 +99,14 @@ app.get('/500', errorController.get500);
 app.use(errorController.get404);
 
 app.use((error, req, res, next) => {
-  // res.status(error.httpStatusCode).rende(./); có thể option này nhưng không cần thiết
-  // res.redirect('/500')
-  exports.get500 = (req, res, next) => {
-    res.status(500).render('500', {
-      pageTitle: 'Error',
-      path: '/500',
-      isAuthenticated: req.session.isLoggedIn
-    });
-  };
-})
+  // res.status(error.httpStatusCode).render(...);
+  // res.redirect('/500');
+  res.status(500).render('500', {
+    pageTitle: 'Error!',
+    path: '/500',
+    isAuthenticated: req.session.isLoggedIn
+  });
+});
 
 mongoose
   .connect(MONGODB_URI)
