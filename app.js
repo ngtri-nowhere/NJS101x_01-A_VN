@@ -28,7 +28,7 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: false })); // đây là phần mềm trung gian, với urlencoded sẽ phân tích dữ liệu về văn bản. url, string
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(
   session({
