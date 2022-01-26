@@ -16,6 +16,14 @@
                         <a class="btn" id="nghiPhep" href="/absent">Đăng Ký Phép</a>
                     </div>
                 </div>
+                <form class="form__checkin" action="/checkOut" method="POST">
+                    <div class="ket__thuc">
+                        <div class="ket__thucOn">
+                            <h3>Bạn chắc chắn muốn kết thúc phiên làm này ?</h3>
+                            <p>Bấm vào nút submit ở dưới đễ gữi việc kết thúc này !</p>
+                        </div>
+                        <button type="subbmit" class="btn" id="submitCheckOut">Checkout</button>
+                    </div>
+                </form>
             </main>
-            <script src="../js/mh_1.js"></script>
             <%- include('./end.ejs') %>

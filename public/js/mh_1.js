@@ -4,6 +4,9 @@ const btnDiemDanh = document.querySelector('#diemDanh');
 const submitDiemDanh = document.querySelector('#submitdiemDanh');
 const startWork = document.querySelector('.batdau__lamviec');
 
+
+
+
 function toggleDiemDanh() {
     diemDanhOn.style.display = "block"
     startWork.style.display = "none"
@@ -15,7 +18,7 @@ function toggleSubmit() {
 }
 
 btnDiemDanh.addEventListener('click', toggleDiemDanh); // hiện data employee
-submitDiemDanh.addEventListener('click', toggleSubmit);// hiện thông tin khi submit và 
+
 
 // kết thúc 
 const ketThuc = document.querySelector('#ketThuc');
@@ -46,7 +49,7 @@ function toggleSubmitNghiPhep() {
 }
 
 nghiPhep.addEventListener('click', toggleNghiPhep);
-submitNghiPhep.addEventListener('click', toggleSubmitNghiPhep);
+
 
 
 

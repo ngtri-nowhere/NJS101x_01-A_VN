@@ -16,6 +16,15 @@
                         <a class="btn" id="nghiPhep" href="/absent">Đăng Ký Phép</a>
                     </div>
                 </div>
+                <form class="form__checkin" action="/checkIn" method="POST">
+                    <div class="nghi_phepConLai">
+                        <p>Số ngày còn lại: <%= prods.annualLeave %>
+                        </p>
+                        <p>Mô Tả: <%= reasonProd %>
+                        </p>
+                    </div>
+                    </div>
+                </form>
+
             </main>
-            <script src="../js/mh_1.js"></script>
             <%- include('./end.ejs') %>

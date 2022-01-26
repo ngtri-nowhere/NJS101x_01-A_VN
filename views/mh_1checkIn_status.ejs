@@ -16,6 +16,16 @@
                         <a class="btn" id="nghiPhep" href="/absent">Đăng Ký Phép</a>
                     </div>
                 </div>
+                <form class="form__checkin">
+                    <h3>Tên nhân viên:<%= prod.name %>
+                    </h3>
+                    <h3>Nơi làm việc: <%= prods.location %>
+                    </h3>
+                    <h3>Giờ bắt đầu: <%= prods.starttime.getHours() %> Giờ <%= prods.starttime.getMinutes() %>
+                                Phút
+                    </h3>
+                    <h3 class="status__working">Status: Working...</h3>
+                </form>
+
             </main>
-            <script src="../js/mh_1.js"></script>
             <%- include('./end.ejs') %>

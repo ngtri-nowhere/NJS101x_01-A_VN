@@ -3,10 +3,11 @@
     <button id="side-menu-toggle">Menu</button>
     <nav class="main-header__nav">
         <li class="main-header__item">
-            <a class="<%= path === '/' ? 'active' : '' %>" href="/">CHECKIN-OUT</a>
+            <a class="<%= (path === '/' || path === '/checkIn' || path === '/checkOut' || path === '/absent' || path === '/checkOutStatus' || path === '/absentStatus') ? 'active' : '' %>"
+                href="/">CHECKIN-OUT</a>
         </li>
         <li class="main-header__item">
-            <a class="<%= path === '/edit' ? 'active' : '' %>" href="/edit">EDIT EMPLOYEE</a>
+            <a class="<%= (path === '/edit' || path === '/addNew') ? 'active' : '' %>" href="/edit">EDIT EMPLOYEE</a>
         </li>
         <li class="main-header__item">
             <a class="<%= path === '/search' ? 'active' : '' %>" href="/search">SEARCH</a>
@@ -20,7 +21,7 @@
 <nav class="mobile-nav">
     <ul class="mobile-nav__item-list">
         <li class="mobile-nav__item">
-            <a class="<%= path === '/' ? 'active' : '' %>" href="/">Checkin-out</a>
+            <a class="<%= path === '/checkIn' ? 'active' : '' %>" href="/checkIn">Checkin-out</a>
         </li>
         <li class="mobile-nav__item">
             <a class="<%= path === '/edit' ? 'active' : '' %>" href="/edit">Edit Employee</a>

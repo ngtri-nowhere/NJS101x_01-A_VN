@@ -16,6 +16,16 @@ const infoEmployee = new Schema({
         type: Number,
         required: true
     },
+    annualLeave: {
+        type: Number,
+    },
+    listAbsent: [
+        {
+            dayoff: String,
+            reasionLeave: String,
+            hourNum: Number
+        }
+    ],
     startDate: {
         type: Date,
         required: true,
@@ -23,74 +33,9 @@ const infoEmployee = new Schema({
     depart: {
         type: String,
     },
-    annualLeave: {
-        type: Number,
-    },
     imageUrl: {
         type: String,
         required: true
-    },
-    location: {
-        type: String,
-        required: true
-    },
-    signOff: {
-        type: Number,
-        required: false
-    },
-    hoursInWave: {
-        type: Number,
-    },
-    hoursInDay: {
-        type: Number
-    },
-    hourStart: {
-        type: Date,
-        default: Date.now
-    },
-    hourEnd: {
-        type: Date,
-        default: Date.now
-    },
-    now: {
-        type: Date,
-        default: Date.now
-    },
-    daysWork: {
-        type: Number
-    },
-    salaryMonth: {
-        type: Number
-    },
-    bodyTem: {
-        type: Date
-    },
-    bodyTemHour: {
-        type: String
-    },
-    vaccineDate: {
-        type: Date
-    },
-    vaccineKind: {
-        type: String,
-    },
-    covidInfect: {
-        type: Date
-    },
-    covidNegative: {
-        type: Date
-    },
-    overTime: {
-        type: Number
-    },
-    Offliving: {
-        type: Date
-    },
-    reasonLiving: {
-        type: String
-    },
-    annualLeaveHours: {
-        type: Number
     },
 }, { timestamps: true });
 

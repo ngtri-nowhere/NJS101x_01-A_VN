@@ -1,0 +1,36 @@
+<%- include('./head.ejs') %>
+    <link rel="stylesheet" href="../css/mh_1.css">
+    </head>
+
+    <body>
+        <%- include('./navigation.ejs') %>
+            <main>
+                <div class="container">
+                    <div class="diem__danh">
+                        <a class="btn" id="diemDanh" href="/checkIn">Điểm Danh</a>
+                    </div>
+                    <div class="ket__thuc">
+                        <a class="btn" id="ketThuc" href="/checkOut">Kết Thúc Làm</a>
+                    </div>
+                    <div class="nghi_phep">
+                        <a class="btn" id="nghiPhep" href="/absent">Đăng Ký Phép</a>
+                    </div>
+                </div>
+                <form class="form__checkin" action="/checkIn" method="POST">
+                    <div class="diem__danhOn">
+                        <p>Tên Nhân Viên:
+                            <%= prods[0].name %>
+                        </p>
+                        <input type="hidden" name="nameEmploy" value="<%= prods.name %>">
+                        <input type="hidden" name="hourStart" class="input__hourStart">
+                        <label for="location">Làm Việc Tại</label>
+                        <select class="input__location" name="location" for="location">
+                            <option>Công Ty</option>
+                            <option>Home</option>
+                            <option>On Site</option>
+                        </select>
+                        <button class="btn" type="submit" id="submitdiemDanh">Gữi Đi</button>
+                    </div>
+                </form>
+            </main>
+            <%- include('./end.ejs') %>
