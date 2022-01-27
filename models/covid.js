@@ -3,16 +3,22 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const covidHistory = new Schema({
-    bodyTem: {
+    bodyTemday: {
         type: Date
     },
     bodyTemhour: {
         type: String
     },
-    vaccineDay: {
+    vaccineDay1: {
         type: Date,
     },
-    vaccineKind: {
+    vaccineKind1: {
+        type: String,
+    },
+    vaccineDay2: {
+        type: Date,
+    },
+    vaccineKind2: {
         type: String,
     },
     covidInfoEffect: {

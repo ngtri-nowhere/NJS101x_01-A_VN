@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 
 const Employee = require('./models/employee');
 const CheckInOut = require('./models/checkin-out');
+const Covid = require('./models/covid');
 
 const errorController = require('./controllers/error');
 
@@ -21,8 +22,7 @@ const { ObjectId } = require('mongodb');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-//em phải lưu user vào req.user, nó có trong video 
-//
+// #region Employee module => emp
 app.use((req, res, next) => {
     Employee.findById('61dd9cfb6708e6fbefca4c94')
         .then(emp => {
@@ -31,7 +31,9 @@ app.use((req, res, next) => {
         })
         .catch(err => console.log(err));
 });
+// #endregion
 
+// #region CheckinOut module currentTime => empCheck
 app.use((req, res, next) => {
     const currentDay = new Date().getDate();
     const currentMonth = new Date().getMonth() + 1;
@@ -45,13 +47,25 @@ app.use((req, res, next) => {
     })
         .catch(err => console.log(err));
 })
+//  #endregion
+
+//#region CheckInOut module all stuff => checkinout
 app.use((req, res, next) => {
     CheckInOut.find().then(checkinout => {
         req.checkinout = checkinout;
         next();
     })
 })
+//#endregion
 
+// #region Covid module all stuff => covi
+app.use((req, res, next) => {
+    Covid.find().then(covi => {
+        req.covi = covi;
+        next();
+    })
+})
+//#endregion
 
 app.use(checkinRoutes);
 app.use(errorController.get404);

@@ -5,21 +5,51 @@
     <body>
         <%- include('./navigation.ejs') %>
             <main>
-                <h3>Click on employee name to more details</h3>
-                <div class="name__employee">
-                    <p>Nguyễn Văn A</p>
-                </div>
-                <div class="info__employee">
-                    <p>Ngày : </p>
-                    <p>Giờ bắt đầu: </p>
-                    <p>Giờ kết thúc: </p>
-                    <p>Nơi làm việc: </p>
-                    <p>Số giờ được tính làm thêm: </p>
-                    <p>Số ngày nghĩ đăng ký: </p>
-                    <p>Tổng số giờ đã làm trong lần kết thúc này: </p>
-                    <p>Tổng số giờ đã làm theo ngày: </p>
-                    <p>Lương tháng: </p>
-                </div>
+                <h3>My Employee</h3>
+                <form method="POST" action="/search">
+                    <div class="name__employee">
+                        <p> Name:
+                            <%= prods.name %>
+                        </p>
+                    </div>
+                    <div class="info__employee">
+                        <p>Ngày: <%= pro.day %>
+                        </p>
+                        <p>Thời gian bắt đầu: <%= pro.items.slice(0)[0].starttime %>
+                        </p>
+                        <p>Thời gian kết thúc:<%= pro.items.slice(-1)[0].endtime %>
+                        </p>
+                        <p>Nơi làm việc: <%= pro.items.slice(-1)[0].location %>
+                        </p>
+                        <p>Số giờ được tính làm thêm: <%= pro.overTime %> giờ
+                        </p>
+                        <p>Số ngày nghĩ đăng ký: <%= absent %> ngày
+                        </p>
+                        <p>Tổng số giờ đã làm trong lần kết thúc này: <%= pro.items.slice(-1)[0].hours %>
+                        </p>
+                        <p>Tổng số giờ đã làm theo ngày: <%= pro.totalHrs %> %> </p>
+                        <p>Lương tháng: <%= salary %> đồng
+                        </p>
+                        <h5>Lưu ý lương tháng thể hiện lương tháng hiện tại</h5>
+                        <h5>Lương = salaryScale * 3000000 + (overTime - số giờ làm thiếu) * 200000</h5>
+                        <label name="pickmonth" for="pickmonth">Chọn tháng</label>
+                        <select id="pickmonth" name="pickmonth">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                            <option>7</option>
+                            <option>8</option>
+                            <option>9</option>
+                            <option>10</option>
+                            <option>11</option>
+                            <option>12</option>
+                        </select>
+                        <button class="btn" type="submit">Xem tháng</button>
+                    </div>
+
+                </form>
             </main>
-            <script src="../js/mh_3.js"></script>
             <%- include('./end.ejs') %>

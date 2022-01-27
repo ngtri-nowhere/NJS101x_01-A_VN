@@ -21,7 +21,7 @@ const infoEmployee = new Schema({
     },
     listAbsent: [
         {
-            dayoff: String,
+            dayoff: Date,
             reasionLeave: String,
             hourNum: Number
         }
@@ -29,6 +29,9 @@ const infoEmployee = new Schema({
     startDate: {
         type: Date,
         required: true,
+    },
+    endDate: {
+        type: Date,
     },
     depart: {
         type: String,

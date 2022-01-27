@@ -69,8 +69,8 @@ exports.checkinPost = (req, res, next) => {
                         month: currentMonth,
                         userId: empId,
                         items: newItems,
-                        totalHrs: '',
-                        overTime: '',
+                        totalHrs: 0,
+                        overTime: 0,
                     }
                 );
                 return newCheckInOutData.save();
@@ -142,6 +142,10 @@ exports.checkOutPost = (req, res, next) => {
                     endtime: nowTime,
                     hours: hourNowTime - startTime
                 });
+
+                //endtime ở emp cũng cần được set.
+                req.emp.endDate = nowTime
+                req.emp.save();
                 checkDataItem.items.slice(-1)[0].endtime = updateCheckOut[0].endtime
                 checkDataItem.items.slice(-1)[0].hours = updateCheckOut[0].hours
                 return checkDataItem.save();
@@ -153,15 +157,15 @@ exports.checkOutPost = (req, res, next) => {
         }
     }).then(rejet => {
         // console.log(rejet);
-
+        let totalHours = 0;
         totalHours = req.empCheck.items.slice(-1)[0].hours
-        req.empCheck.totalHrs += totalHours
+        req.empCheck.totalHrs = req.empCheck.totalHrs + totalHours
         if (req.empCheck.totalHrs > 8) {
             overTime = req.empCheck.totalHrs - 8
             req.empCheck.overTime = overTime
         }
         console.log(req.empCheck)
-        return req.empCheck.save();
+        req.empCheck.save();
     }).then(result => {
         const nowTime = new Date()
         const prodItem = req.empCheck.items.slice(-1)[0]
@@ -203,7 +207,6 @@ exports.absentPost = (req, res, next) => {
     } else {
         hourday = 1;
     }
-
     if (req.emp.annualLeave >= hourday) {
         const newListOff = [];
         newListOff.push({
@@ -300,17 +303,176 @@ exports.postEditEmployee = (req, res, next) => {
 }
 //#endregion
 
-
 //#region GET SEACH Employee mh_3
 exports.search = (req, res, next) => {
+    const absentSign = 12 - req.emp.annualLeave
+
+    // get all hourLeave in month 
+    const hourLeave = (req.emp.listAbsent.map(i => {
+        while (i.dayoff.getMonth() + 1 == currentMonth) {
+            let hoursnum = 0;
+            return hoursnum += i.hourNum
+        }
+    }))
+    const totalhourLeave = hourLeave.reduce((a, b) => {
+        return a + b
+    }, 0)
+    // ---------  total hourLeave annual in a month
+
+    // get all overtime have in a month
+    const getOvertime = (req.checkinout.map(i => {
+        while (i.month == currentMonth) {
+            let overwork = 0;
+            return overwork += i.overTime
+        }
+    }));
+    const totalOvertime = getOvertime.reduce((a, b) => {
+        return a + b
+    }, 0);
+
+    // -- total OverTime get by sum of all day 
+
+    //get all hourworking in day
+    const getHour = (req.checkinout.map(i => {
+        while (i.month == currentMonth) {
+            let fullHour = 0;
+            return fullHour += i.totalHrs
+        }
+    }))
+    const totalHourWork = getHour.reduce((a, b) => {
+        return a + b;
+    }, 0)
+
+    // --  total hour working in month
+
+    // tạo số giờ tối thiểu cần thiết trong tháng
+    const standardHour = (req.checkinout.map(i => {
+        while (i.month == currentMonth) {
+            let sorthour = 0
+            return sorthour = req.checkinout.length * 8
+        }
+    }))
+    const standardAMonth = standardHour[0]
+
+    //tạo salaryMonth
+    const salaryMonth = (req.emp.salaryScale * 3000000) + ((totalOvertime - (totalHourWork - standardAMonth) + totalhourLeave) * 200000)
+    console.log(salaryMonth)
+
+    console.log(req.emp)
+    console.log(req.empCheck)
+    console.log(req.checkinout.length)
+
     res.render('mh_3', {
         pageTitle: "Search Employee info",
-        path: '/search'
+        path: '/search',
+        prods: req.emp,
+        prod: req.checkinout,
+        pro: req.empCheck,
+        absent: absentSign,
+        salary: salaryMonth
     });
 }
-
-
 //#endregion
+
+//#region POST SEACH Employee mh_3
+exports.searchPost = (req, res, next) => {
+    const pickMonth = req.body.pickmonth // get pick month
+
+    empCheckin = req.empCheck
+    if (empCheckin.month != pickMonth) {
+        empCheckin = null
+    } else {
+        empCheckin = empCheckin
+    }
+    // console.log(empCheckin + "this is empCheckin")
+    prodCheck = req.checkinout
+    if (prodCheck.month != pickMonth) {
+        prodCheck = null
+    } else {
+        prodCheck = prodCheck
+    }
+
+
+    // get all hourLeave in month 
+    const hourLeave = (req.emp.listAbsent.map(i => {
+        while (i.dayoff.getMonth() + 1 == pickMonth) {
+            if (i.dayoff.getMonth() + 1 == null) {
+                hoursnum = 0;
+            }
+            let hoursnum = 0;
+            return hoursnum += i.hourNum
+        }
+    }))
+    const totalhourLeave = hourLeave.reduce((a, b) => {
+        return a + b
+    }, 0)
+    console.log(totalhourLeave)
+    // ---------  total hourLeave annual in a month
+
+    // get all overtime have in a month
+    const getOvertime = (req.checkinout.map(i => {
+        while (i.month == pickMonth) {
+            if (i.month == null) {
+                overwork = 0;
+            }
+            let overwork = 0;
+            return overwork += i.overTime
+        }
+    }));
+    const totalOvertime = getOvertime.reduce((a, b) => {
+        return a + b
+    }, 0);
+    console.log(totalOvertime);
+    // -- total OverTime get by sum of all day 
+
+    //get all hourworking in day
+    const getHour = (req.checkinout.map(i => {
+        while (i.month == pickMonth) {
+            if (i.month == null) {
+                fullHour = 0;
+            }
+            let fullHour = 0;
+            return fullHour += i.totalHrs
+        }
+    }))
+    const totalHourWork = getHour.reduce((a, b) => {
+        return a + b;
+    }, 0)
+    console.log(totalHourWork + "this is totalHourWork in month");
+    // --  total hour working in month
+
+    // tạo số giờ tối thiểu cần thiết trong tháng
+    const standardHour = (req.checkinout.map(i => {
+        while (i.month == pickMonth) {
+            if (i.month == null) {
+                sorthour = 0;
+            }
+            let sorthour = 0
+            return sorthour = req.checkinout.length * 8
+        }
+    }))
+    const standardAMonth = standardHour[0]
+    console.log(standardAMonth)
+
+    //tạo salaryMonth
+    let salaryMonth
+    salaryMonth = (req.emp.salaryScale * 3000000) + ((totalOvertime - (totalHourWork - standardAMonth) + totalhourLeave) * 200000)
+    if (standardAMonth != NaN || standardAMonth != undefined || standardAMonth != null) {
+    } else {
+        salaryMonth = "Noooooooooooooooooooooooooooooo"
+    }
+    console.log(salaryMonth)
+
+    res.render("mh_3Status", {
+        pageTitle: "Employee Search info",
+        path: "/search",
+        prods: req.emp,
+        pro: empCheckin,
+        pr: prodCheck,
+        salary: salaryMonth
+    })
+}
+// #endregion
 
 
 //#region GET COVID mh_4
@@ -324,33 +486,45 @@ exports.covid = (req, res, next) => {
 
 //#region POST Covid mh_4
 exports.covidPost = (req, res, next) => {
-    const empId = '61dd9cfb6708e6fbefca4c94'
-
-    const dkThannhiet = req.body.dk_thannhiet
+    const empId = req.emp._id
+    const dkThannhietngay = req.body.dk_thannhiet
     const dkThannhietGio = req.body.dk_thannhiet_gio
 
+    const dkVaccine1 = req.body.dk_vaccine1
+    const dkVaccineKind1 = req.body.dk_vaccine_kind1
 
-    const dkVaccine = req.body.dk_vaccine
-    const dkVaccineKind = req.body.dk_vaccine_kind
+    const dkVaccine2 = req.body.dk_vaccine2
+    const dkVaccineKind2 = req.body.dk_vaccine_kind2
 
     const covidPositive = req.body.covid_historyPositive
     const covidNegative = req.body.covid_historyNegative
 
-    // Employee.findById(empId)
-    //     .then(emp => {
-    //         emp.bodyTem = dkThannhiet
-    //         emp.bodyTemHour = dkThannhietGio
-    //         emp.vaccineDate = dkVaccine
-    //         emp.vaccineKind = dkVaccineKind
-    //         emp.covidInfect = covidPositive
-    //         emp.covidNegative = covidNegative
-    //         return emp.save()
-    //     })
-    //     .then(result => {
-    //         console.log("update covid success");
-    //         res.redirect('/');
-    //     }).catch(err => {
-    //         console.log(err);
-    //     });
+    const newInfo = new Covid({
+        bodyTemday: dkThannhietngay,
+        bodyTemhour: dkThannhietGio,
+        vaccineDay1: dkVaccine1,
+        vaccineKind1: dkVaccineKind1,
+        vaccineDay2: dkVaccine2,
+        vaccineKind2: dkVaccineKind2,
+        covidInfoEffect: covidPositive,
+        covidInfoNega: covidNegative,
+        userId: empId
+    })
+    newInfo.save();
+    // req.covi.bodyTemday = dkThannhietngay
+    // req.covi.bodyTemhour = dkThannhietGio
+    // req.covi.vaccineDay1 = dkVaccine1
+    // req.covi.vaccineKind1 = dkVaccineKind1
+    // req.covi.vaccineDay2 = dkVaccine2
+    // req.covi.vaccineKind2 = dkVaccineKind2
+    // req.covi.covidInfoEffect = covidPositive
+    // req.covi.covidInfoNega = covidNegative
+    // console.log(req.covi);
+    // req.covi.save();
+    res.render("mh_4Status", {
+        pageTitle: "Success",
+        path: "/covid",
+    });
+    console.log("Success!");
 }
 //#endregion

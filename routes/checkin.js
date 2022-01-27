@@ -24,9 +24,10 @@ router.get('/edit', checkingController.edit);
 router.get('/addNew/:employeeId', checkingController.getEditImg);
 //Post Edit Img
 router.post('/addNew', checkingController.postEditEmployee);
-
 //Get Search
 router.get('/search', checkingController.search);
+//Post => Search
+router.post('/search', checkingController.searchPost);
 //Get Covid
 router.get('/covid', checkingController.covid);
 //Post Covid 
