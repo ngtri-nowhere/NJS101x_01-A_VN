@@ -4,16 +4,22 @@
     <nav class="main-header__nav">
         <li class="main-header__item">
             <a class="<%= (path === '/' || path === '/checkIn' || path === '/checkOut' || path === '/absent' || path === '/checkOutStatus' || path === '/absentStatus') ? 'active' : '' %>"
-                href="/">CHECKIN-OUT</a>
+                href="/">Check in-out</a>
         </li>
         <li class="main-header__item">
-            <a class="<%= (path === '/edit' || path === '/addNew') ? 'active' : '' %>" href="/edit">EDIT EMPLOYEE</a>
+            <a class="<%= (path === '/edit' || path === '/addNew') ? 'active' : '' %>" href="/edit">Edit employee</a>
         </li>
         <li class="main-header__item">
-            <a class="<%= path === '/search' ? 'active' : '' %>" href="/search">SEARCH</a>
+            <a class="<%= path === '/search' ? 'active' : '' %>" href="/search">Search</a>
         </li>
         <li class="main-header__item">
-            <a class="<%= path === '/covid' ? 'active' : '' %>" href="/covid">COVID HISTORY</a>
+            <a class="<%= path === '/covid' ? 'active' : '' %>" href="/covid">Covid info</a>
+        </li>
+        <li class="main-header__item">
+            <a class="<%= path === '/manager' ? 'active' : '' %>" href="/manager">Manager</a>
+        </li>
+        <li class="main-header__item signin">
+            <a class="<%= path === '/signin' ? 'active': '' %>" href="/signin">Sign Up </a>
         </li>
     </nav>
 </header>
@@ -31,6 +37,12 @@
         </li>
         <li class="mobile-nav__item">
             <a class="<%= path === '/covid' ? 'active' : '' %>" href="/covid">Covid History</a>
+        </li>
+        <li class="mobile-nav__item">
+            <a class="<%= path === '/manager' ? 'active' : '' %>" href="/manager">Manager</a>
+        </li>
+        <li class="mobile-nav__item signup">
+            <a class="<%= path === '/signin' ? 'active' : '' %>" href="/signin">Sign Up</a>
         </li>
     </ul>
 </nav>

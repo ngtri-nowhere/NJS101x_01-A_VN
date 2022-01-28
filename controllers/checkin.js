@@ -271,7 +271,7 @@ exports.getEditImg = (req, res, next) => {
             if (!emp) {
                 return res.redirect('/edit');
             }
-            res.render('mh_5addNew', {
+            res.render('mh_2addNew', {
                 pageTitle: 'Change Image',
                 path: '/addNew',
                 editing: editMode,

@@ -70,7 +70,7 @@ app.use((req, res, next) => {
 app.use(checkinRoutes);
 app.use(errorController.get404);
 
-mongoose.connect('mongodb+srv://user_um10:GSyhQafG8H2KHXom@cluster0.5djo0.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
+mongoose.connect('mongodb+srv://user_um333:PtVKLHIqdgD5YBAQ@asm2.usv6n.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
     .then(result => {
         app.listen(3000);
     }).catch(err => console.log(err));

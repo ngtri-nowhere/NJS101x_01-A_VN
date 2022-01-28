@@ -58,7 +58,7 @@ form {
 
 .main-header__item {
     margin: 0 1rem;
-    padding: 1rem;
+    padding: 10px;
 }
 
 
@@ -74,13 +74,10 @@ form {
 .main-header__item a:hover,
 .main-header__item a:active,
 .main-header__item a.active {
-    letter-spacing:5px;
     transition: 0.2s ease-out;
-    font-size:20px;
+    font-size:17px;
     color: rgb(72, 4, 182);
-
 }
-
 
 .mobile-nav {
     width: 30rem;
