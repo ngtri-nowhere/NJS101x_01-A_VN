@@ -1,0 +1,29 @@
+<%- include('./head.ejs') %>
+    <link rel="stylesheet" href="../css/mh_6.css">
+    </head>
+
+    <body>
+        <%- include('./navigation.ejs') %>
+            <main>
+                <% if(errorMessage) { %>
+                    <div class="user-message user-message-error">
+                        <%= errorMessage %>
+                    </div>
+                    <% } %>
+                        <form method="POST" action="/login">
+                            <div class="form__control">
+                                <label for="email">E-Mail</label>
+                                <input
+                                    class="<%= validationErrors.find(e => e.param === 'email') ? 'invalid' : '' %>"" type="
+                                    email" name="email" id="email" value="<%= oldInput.email %>">
+                            </div>
+                            <div class="form__control">
+                                <label for="password">Password</label>
+                                <input
+                                    class="<%= validationErrors.find(e => e.param === 'password') ? 'invalid' : '' %>"
+                                    type="password" name="password" id="password" value="<%= oldInput.password %>">
+                            </div>
+                            <button class="btn" type="submit">Login</button>
+                        </form>
+            </main>
+            <%- include('./end.ejs') %>

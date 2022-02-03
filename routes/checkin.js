@@ -1,8 +1,10 @@
 const express = require('express');
 
 const checkingController = require('../controllers/checkin');
+const isAuth = require('../middleware/is-auth');
 
 const router = express.Router();
+
 
 router.get('/', checkingController.mh1);
 
@@ -32,6 +34,9 @@ router.post('/search', checkingController.searchPost);
 router.get('/covid', checkingController.covid);
 //Post Covid 
 router.post('/covid', checkingController.covidPost);
+//Get Manager
+router.get("/manager", checkingController.managerGet);
+
 
 
 module.exports = router;

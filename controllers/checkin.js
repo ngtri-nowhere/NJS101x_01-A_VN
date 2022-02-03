@@ -1,6 +1,7 @@
 const Employee = require('../models/employee');
 const CheckInOut = require('../models/checkin-out');
 const Covid = require('../models/covid');
+const { render } = require('express/lib/response');
 
 //Lấy date time values
 const currentDay = new Date().getDate();
@@ -12,7 +13,7 @@ exports.mh1 = (req, res, next) => {
         res.render('mh_1', {
             pageTitle: "CheckIn-Out",
             path: "/",
-            prods: emp
+            prods: emp,
         });
     }).catch(err => {
         console.log(err);
@@ -26,7 +27,7 @@ exports.checkIn = (req, res, next) => {
         res.render('mh_1checkIn', {
             pageTitle: "CheckIn",
             path: "/checkIn",
-            prods: emp
+            prods: emp,
         });
     }).catch(err => {
         console.log(err);
@@ -109,7 +110,7 @@ exports.checkOut = (req, res, next) => {
         res.render('mh_1checkOut', {
             pageTitle: "CheckOut",
             path: "/checkOut",
-            prods: emp
+            prods: emp,
         });
     }).catch(err => {
         console.log(err);
@@ -185,7 +186,7 @@ exports.absent = (req, res, next) => {
         res.render('mh_1absent', {
             pageTitle: "Absent",
             path: '/absent',
-            prods: emp
+            prods: emp,
         })
     }).catch(err => {
         console.log(err)
@@ -247,7 +248,8 @@ exports.absentPost = (req, res, next) => {
 //#region GET Employee
 //Get Employee Info
 exports.edit = (req, res, next) => {
-    Employee.find().then(emp => {
+    const empId = req.session.user._id
+    Employee.findOne(empId).then(emp => {
         res.render('mh_2', {
             pageTitle: "Edit Employee",
             path: '/edit',
@@ -287,7 +289,8 @@ exports.getEditImg = (req, res, next) => {
 //#region POST EDIT Employee mh_2
 exports.postEditEmployee = (req, res, next) => {
     const empId = req.body.employeeId; // gia tri lay ra tu input an 
-    const updatedImage = req.body.imageUrl
+    const updatedImage = req.file
+    console.log(updatedImage);
     Employee.findById(empId)
         .then(emp => {
             emp.imageUrl = updatedImage;
@@ -369,7 +372,7 @@ exports.search = (req, res, next) => {
         prod: req.checkinout,
         pro: req.empCheck,
         absent: absentSign,
-        salary: salaryMonth
+        salary: salaryMonth,
     });
 }
 //#endregion
@@ -479,7 +482,7 @@ exports.searchPost = (req, res, next) => {
 exports.covid = (req, res, next) => {
     res.render('mh_4', {
         pageTitle: "Covid Vaccine",
-        path: '/covid'
+        path: '/covid',
     });
 }
 //#endregion
@@ -528,3 +531,12 @@ exports.covidPost = (req, res, next) => {
     console.log("Success!");
 }
 //#endregion
+
+// #region GET Manager mh_5
+exports.managerGet = (req, res, next) => {
+    res.render("mh_5", {
+        pageTitle: "Manager Site",
+        path: "/manager",
+    });
+}
+// #endregion

@@ -1,5 +1,5 @@
 <%- include('./head.ejs') %>
-    <link rel="stylesheet" href="../css/mh_5.css">
+    <link rel="stylesheet" href="../css/mh_2Status.css">
     </head>
 
     <body>
@@ -81,7 +81,7 @@
                         <label for="imageUrl">
                             <h3>Image URL(Edit)</h3>
                         </label>
-                        <input type="text" id="imageUrl" name="imageUrl" for="imageUrl"
+                        <input type="file" id="imageUrl" name="imageUrl" for="imageUrl"
                             value="<% if(editing) { %> <%= employee.imageUrl %> <%} %>">
                     </div>
                     <input type="hidden" value="<%= employee._id %>" name="employeeId">

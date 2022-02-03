@@ -40,6 +40,31 @@ const infoEmployee = new Schema({
         type: String,
         required: true
     },
+    email: {
+        type: String,
+        required: true,
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    isAproved: {
+        type: Boolean,
+    },
+    isAdmin: {
+        type: Boolean,
+        required: true,
+    },
+    empList: [
+        {
+            name: String,
+            empId: {
+                type: Schema.Types.ObjectId,
+                ref: 'Employees',
+                required: true,
+            }
+        }
+    ],
 }, { timestamps: true });
 
 module.exports = mongoose.model('Employees', infoEmployee);

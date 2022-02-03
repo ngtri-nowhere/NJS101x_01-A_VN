@@ -6,40 +6,38 @@
     <body>
         <%- include('./navigation.ejs') %>
             <main>
-                <% for (let emp of prods) { %>
-                    <div class="btn__addNew">
-                        <a class="btn__addNew__btn" href="#">Add New Employee <i class="fas fa-user-edit"></i></a>
+                <div class="btn__addNew">
+                    <a class="btn__addNew__btn" href="#">Add New Employee <i class="fas fa-user-edit"></i></a>
+                </div>
+                <div class="addNew__container">
+                    <div class="addNew__employee">
+                        <h4>ID:
+                            <%= prods._id %>
+                        </h4>
+                        <h4>Name:
+                            <%= prods.name %>
+                        </h4>
+                        <h4>Dath of Birth:
+                            <%= prods.doB %>
+                        </h4>
+                        <h4>Salary Scale:
+                            <%= prods.salaryScale %>
+                        </h4>
+                        <h4>Start Date:
+                            <%= prods.startDate %>
+                        </h4>
+                        <h4>Department:
+                            <%= prods.depart %>
+                        </h4>
+                        <h4>Annual Leave:
+                            <%=prods.annualLeave %>
+                        </h4>
+                        <h4 for="imgEmployee">imageUrl Employee</h4>
+                        <img src="<%= prods.imageUrl %>" />
+                        <a class="btn__addNew__btn" href="/addNew/<%= prods._id %>?edit=true">Edit</a>
+                        <!-- <button class="btnEditEmployee" id="btnEditEmployee" type="submit">Edit</button> -->
                     </div>
-                    <div class="addNew__container">
-                        <div class="addNew__employee">
-                            <h4>ID:
-                                <%= emp._id %>
-                            </h4>
-                            <h4>Name:
-                                <%= emp.name %>
-                            </h4>
-                            <h4>Dath of Birth:
-                                <%= emp.doB %>
-                            </h4>
-                            <h4>Salary Scale:
-                                <%= emp.salaryScale %>
-                            </h4>
-                            <h4>Start Date:
-                                <%= emp.startDate %>
-                            </h4>
-                            <h4>Department:
-                                <%= emp.depart %>
-                            </h4>
-                            <h4>Annual Leave:
-                                <%=emp.annualLeave %>
-                            </h4>
+                </div>
 
-                            <h4 for="imgEmployee">imageUrl Employee</h4>
-                            <img src="<%= emp.imageUrl %>" />
-                            <a class="btn__addNew__btn" href="/addNew/<%= emp._id %>?edit=true">Edit</a>
-                            <!-- <button class="btnEditEmployee" id="btnEditEmployee" type="submit">Edit</button> -->
-                        </div>
-                    </div>
-                    <% } %>
             </main>
             <%- include('./end.ejs') %>

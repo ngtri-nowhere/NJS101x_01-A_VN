@@ -2,25 +2,40 @@
 <header class="main-header">
     <button id="side-menu-toggle">Menu</button>
     <nav class="main-header__nav">
-        <li class="main-header__item">
-            <a class="<%= (path === '/' || path === '/checkIn' || path === '/checkOut' || path === '/absent' || path === '/checkOutStatus' || path === '/absentStatus') ? 'active' : '' %>"
-                href="/">Check in-out</a>
-        </li>
-        <li class="main-header__item">
-            <a class="<%= (path === '/edit' || path === '/addNew') ? 'active' : '' %>" href="/edit">Edit employee</a>
-        </li>
-        <li class="main-header__item">
-            <a class="<%= path === '/search' ? 'active' : '' %>" href="/search">Search</a>
-        </li>
-        <li class="main-header__item">
-            <a class="<%= path === '/covid' ? 'active' : '' %>" href="/covid">Covid info</a>
-        </li>
-        <li class="main-header__item">
-            <a class="<%= path === '/manager' ? 'active' : '' %>" href="/manager">Manager</a>
-        </li>
-        <li class="main-header__item signin">
-            <a class="<%= path === '/signin' ? 'active': '' %>" href="/signin">Sign Up </a>
-        </li>
+        <ul class="main-header__item-list">
+            <li class="main-header__item">
+                <a class="<%= (path === '/' || path === '/checkIn' || path === '/checkOut' || path === '/absent' || path === '/checkOutStatus' || path === '/absentStatus') ? 'active' : '' %>"
+                    href="/">Check in-out</a>
+            </li>
+            <li class="main-header__item">
+                <a class="<%= (path === '/edit' || path === '/addNew') ? 'active' : '' %>" href="/edit">Edit
+                    employee</a>
+            </li>
+            <li class="main-header__item">
+                <a class="<%= path === '/search' ? 'active' : '' %>" href="/search">Search</a>
+            </li>
+            <li class="main-header__item">
+                <a class="<%= path === '/covid' ? 'active' : '' %>" href="/covid">Covid info</a>
+            </li>
+            <li class="main-header__item">
+                <a class="<%= path === '/manager' ? 'active' : '' %>" href="/manager">Manager</a>
+            </li>
+        </ul>
+        <ul class="main-header__item-list">
+            <% if(!isAuthenticated) { %>
+                <li class="main-header__item">
+                    <a class="<%= path === '/login' ? 'active': '' %>" href="/login">Login</a>
+                </li>
+                <% } else { %>
+                    <li class="main-header__item">
+                        <form action="/logout" method="post">
+                            <input type="hidden">
+                            <button type="submit">Log out</button>
+                        </form>
+                    </li>
+                    <% } %>
+        </ul>
+
     </nav>
 </header>
 
@@ -41,8 +56,17 @@
         <li class="mobile-nav__item">
             <a class="<%= path === '/manager' ? 'active' : '' %>" href="/manager">Manager</a>
         </li>
-        <li class="mobile-nav__item signup">
-            <a class="<%= path === '/signin' ? 'active' : '' %>" href="/signin">Sign Up</a>
-        </li>
+        <% if(!isAuthenticated){ %>
+            <li class="mobile-nav__item ">
+                <a class="<%= path === '/login' ? 'active' : '' %>" href="/login">Login</a>
+            </li>
+            <% } else { %>
+                <li class="mobile-nav__item">
+                    <form action="/logout" method="post">
+                        <input type="hidden">
+                        <button type="submit">Logout</button>
+                    </form>
+                </li>
+                <% } %>
     </ul>
 </nav>
