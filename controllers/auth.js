@@ -1,6 +1,6 @@
 const { validationResult } = require('express-validator/check');
 
-const Employee = require('../models/employee');
+const Employee = require('../middleware/models/employee');
 
 // #region Get Log In mh_6
 exports.logIn = (req, res, next) => {

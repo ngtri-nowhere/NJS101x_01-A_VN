@@ -1,7 +1,8 @@
-const Employee = require('../models/employee');
-const CheckInOut = require('../models/checkin-out');
-const Covid = require('../models/covid');
-const { render } = require('express/lib/response');
+const Employee = require('../middleware/models/employee');
+const CheckInOut = require('../middleware/models/checkin-out');
+const Covid = require('../middleware/models/covid');
+
+const fileHelper = require('../util/file')
 
 //Lấy date time values
 const currentDay = new Date().getDate();
@@ -23,7 +24,8 @@ exports.mh1 = (req, res, next) => {
 
 //#region GET CHECK IN
 exports.checkIn = (req, res, next) => {
-    Employee.find().then(emp => {
+    const empId = req.session.user._id
+    Employee.findById(empId).then(emp => {
         res.render('mh_1checkIn', {
             pageTitle: "CheckIn",
             path: "/checkIn",
@@ -37,7 +39,7 @@ exports.checkIn = (req, res, next) => {
 
 //#region POST CHECK IN wow
 exports.checkinPost = (req, res, next) => {
-    const empId = req.emp._id;
+    const empId = req.session.user._id;
     const location = req.body.location;
     console.log('POST CHECKIN ' + empId);
     // Chia làm 2 phần 
@@ -91,12 +93,12 @@ exports.checkinPost = (req, res, next) => {
             console.log('SUCCESFULLY CHECKED IN ');
             const myresult = result.items.slice(-1);
             console.log(myresult[0].location)
-            Employee.find().then(emp => {
+            Employee.findById(empId).then(emp => {
                 res.render('mh_1checkIn_status', {
                     pageTitle: "CheckIn-Status",
                     path: "/checkInStatus",
                     prods: myresult[0],
-                    prod: emp[0]
+                    prod: emp
                 })
             })
         }).catch(err => { console.log(err) });
@@ -106,6 +108,7 @@ exports.checkinPost = (req, res, next) => {
 // #region GET CHECKOUT
 //mh-1 get -checkout
 exports.checkOut = (req, res, next) => {
+
     Employee.find().then(emp => {
         res.render('mh_1checkOut', {
             pageTitle: "CheckOut",
@@ -121,7 +124,7 @@ exports.checkOut = (req, res, next) => {
 //#region POST CHECKOUT
 // mh-1 post -checkout 
 exports.checkOutPost = (req, res, next) => {
-    const empId = req.emp._id;
+    const empId = req.session.user._id;
 
     CheckInOut.findOne({
         userId: empId,
@@ -143,12 +146,20 @@ exports.checkOutPost = (req, res, next) => {
                     endtime: nowTime,
                     hours: hourNowTime - startTime
                 });
-
-                //endtime ở emp cũng cần được set.
-                req.emp.endDate = nowTime
-                req.emp.save();
+                Employee.findById(empId).then(myemp => {
+                    myemp.endDate = nowTime
+                    myemp.save()
+                })
                 checkDataItem.items.slice(-1)[0].endtime = updateCheckOut[0].endtime
                 checkDataItem.items.slice(-1)[0].hours = updateCheckOut[0].hours
+                // tạo totalHours để add totalHours và tạo ra overTime từ đó
+                let totalHours
+                totalHours = checkDataItem.items.slice(-1)[0].hours
+                checkDataItem.totalHrs += totalHours
+                if (checkDataItem.totalHrs > 8) {
+                    overTime = checkDataItem.totalHrs - 8
+                    checkDataItem.overTime = overTime
+                }
                 return checkDataItem.save();
             }
             else {
@@ -156,26 +167,18 @@ exports.checkOutPost = (req, res, next) => {
                 console.log("It's have No wave to checkout-");
             }
         }
-    }).then(rejet => {
-        // console.log(rejet);
-        let totalHours = 0;
-        totalHours = req.empCheck.items.slice(-1)[0].hours
-        req.empCheck.totalHrs = req.empCheck.totalHrs + totalHours
-        if (req.empCheck.totalHrs > 8) {
-            overTime = req.empCheck.totalHrs - 8
-            req.empCheck.overTime = overTime
-        }
-        console.log(req.empCheck)
-        req.empCheck.save();
     }).then(result => {
+        console.log(result)
         const nowTime = new Date()
-        const prodItem = req.empCheck.items.slice(-1)[0]
+        const prodItem = result.items.slice(-1)[0]
         res.render("mh_1checkOutStatus", {
             pageTitle: "Finish CheckOut",
             path: "/checkOut",
             prods: prodItem,
             prod: nowTime
         })
+    }).catch(err => {
+        console.log(err)
     })
 }
 //#endregion
@@ -201,46 +204,49 @@ exports.absentPost = (req, res, next) => {
     const annualLeaveTime = req.body.annuaLeaveTime // chọn số giờ muốn nghĩ
     const reason = req.body.reasonLeaveTime // lý do nghĩ
 
-    console.log(req.emp.listAbsent);
+    const empId = req.session.user._id
+
     let hourday;
     if (annualLeaveTime <= 4) {
         hourday = 0.5;
     } else {
         hourday = 1;
     }
-    if (req.emp.annualLeave >= hourday) {
-        const newListOff = [];
-        newListOff.push({
-            dayoff: annualLeaveDay,
-            reasionLeave: reason,
-            hourNum: annualLeaveTime
-        });
-        req.emp.listAbsent.push(newListOff[0])
-        if (annualLeaveTime <= 4) {
-            hourday = 0.5;
-            req.emp.annualLeave = req.emp.annualLeave - hourday
-        } else {
-            hourday = 1;
-            req.emp.annualLeave = req.emp.annualLeave - hourday
+    Employee.findById(empId).then(myEmp => {
+        if (myEmp.annualLeave >= hourday) {
+            const newListOff = [];
+            newListOff.push({
+                dayoff: annualLeaveDay,
+                reasionLeave: reason,
+                hourNum: annualLeaveTime
+            });
+            myEmp.listAbsent.push(newListOff[0])
+            if (annualLeaveTime <= 4) {
+                hourday = 0.5;
+                myEmp.annualLeave = myEmp.annualLeave - hourday
+            } else {
+                hourday = 1;
+                myEmp.annualLeave = myEmp.annualLeave - hourday
+            }
+            myEmp.save();
+            console.log("đã save");
+            res.render("mh_1absentStatus", {
+                pageTitle: "Đăng Ký Success",
+                path: "/absent",
+                prods: myEmp,
+                reasonProd: reason
+            });
         }
-        req.emp.save();
-        console.log("đã save");
-        res.render("mh_1absentStatus", {
-            pageTitle: "Đăng Ký Success",
-            path: "/absent",
-            prods: req.emp,
-            reasonProd: reason
-        });
-    }
-    else {
-        let messageError = "Ngày nghĩ phép không đủ hoặc hết phép"
-        res.render("mh_1absentStatus", {
-            pageTitle: "Đăng ký Failed",
-            path: "/absent",
-            prods: req.emp,
-            reasonProd: messageError
-        })
-    }
+        else {
+            let messageError = "Ngày nghĩ phép không đủ hoặc hết phép"
+            res.render("mh_1absentStatus", {
+                pageTitle: "Đăng ký Failed",
+                path: "/absent",
+                prods: myEmp,
+                reasonProd: messageError
+            })
+        }
+    })
 }
 // #endregion
 
@@ -249,7 +255,10 @@ exports.absentPost = (req, res, next) => {
 //Get Employee Info
 exports.edit = (req, res, next) => {
     const empId = req.session.user._id
-    Employee.findOne(empId).then(emp => {
+    Employee.findById(empId).then(emp => {
+
+        const newProds = emp.imageUrl
+        console.log(newProds)
         res.render('mh_2', {
             pageTitle: "Edit Employee",
             path: '/edit',
@@ -289,20 +298,22 @@ exports.getEditImg = (req, res, next) => {
 //#region POST EDIT Employee mh_2
 exports.postEditEmployee = (req, res, next) => {
     const empId = req.body.employeeId; // gia tri lay ra tu input an 
-    const updatedImage = req.file
-    console.log(updatedImage);
-    Employee.findById(empId)
-        .then(emp => {
-            emp.imageUrl = updatedImage;
-            return emp.save()
-        })
-        .then(result => {
-            console.log("update employ image success");
-            res.redirect('/edit');
-        })
-        .catch(err => {
-            console.log(err);
-        })
+    const image = req.file;
+    console.log(image);
+
+    Employee.findById(empId).then(emp => {
+        if (image) {
+            fileHelper.deleteFile(emp.imageUrl);
+            emp.imageUrl = image.path
+        }
+        return emp.save().then(result => {
+            console.log("Update Employee Success!");
+            res.redirect('/edit')
+        });
+    }).catch(err => {
+        console.log(err)
+    })
+
 }
 //#endregion
 

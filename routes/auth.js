@@ -2,10 +2,11 @@ const express = require("express");
 const { check, body } = require("express-validator/check");
 
 const authController = require("../controllers/auth");
-
+const isAuth = require('../middleware/is-auth');
 
 const router = express.Router();
 
+//#region login logout mh_6
 router.get('/login', authController.logIn) // Get logIn
 
 router.post('/login', [
@@ -20,5 +21,7 @@ router.post('/login', [
 ], authController.postLogin) // Post logIn
 
 router.post('/logout', authController.postLogout) // Post logOut
+
+//#endregion
 
 module.exports = router;

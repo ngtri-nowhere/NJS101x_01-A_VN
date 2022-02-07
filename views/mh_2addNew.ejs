@@ -5,7 +5,7 @@
     <body>
         <%- include('./navigation.ejs') %>
             <main>
-                <form class="edit__employee" action="/addNew" method="POST">
+                <form class="edit__employee" action="/addNew" method="POST" enctype="multipart/form-data">
 
                     <div class="form-control">
                         <label for="id" name="id" id="id">
@@ -78,11 +78,10 @@
                         </label>
                     </div>
                     <div class="form-control">
-                        <label for="imageUrl">
+                        <label for="image">
                             <h3>Image URL(Edit)</h3>
                         </label>
-                        <input type="file" id="imageUrl" name="imageUrl" for="imageUrl"
-                            value="<% if(editing) { %> <%= employee.imageUrl %> <%} %>">
+                        <input type="file" id="image" name="image" for="image">
                     </div>
                     <input type="hidden" value="<%= employee._id %>" name="employeeId">
                     <button class="btn" type="submit">

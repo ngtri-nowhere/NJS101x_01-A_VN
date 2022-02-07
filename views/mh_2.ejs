@@ -33,8 +33,9 @@
                             <%=prods.annualLeave %>
                         </h4>
                         <h4 for="imgEmployee">imageUrl Employee</h4>
-                        <img src="<%= prods.imageUrl %>" />
-                        <a class="btn__addNew__btn" href="/addNew/<%= prods._id %>?edit=true">Edit</a>
+                        <img src="/<%= prods.imageUrl %>" name="image" id="image" />
+
+                        <a class=" btn__addNew__btn" href="/addNew/<%= prods._id %>?edit=true">Edit</a>
                         <!-- <button class="btnEditEmployee" id="btnEditEmployee" type="submit">Edit</button> -->
                     </div>
                 </div>

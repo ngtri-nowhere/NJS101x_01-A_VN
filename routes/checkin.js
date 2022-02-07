@@ -1,42 +1,54 @@
 const express = require('express');
 
 const checkingController = require('../controllers/checkin');
+const { body } = require('express-validator/check');
 const isAuth = require('../middleware/is-auth');
 
 const router = express.Router();
 
 
-router.get('/', checkingController.mh1);
+router.get('/', isAuth, checkingController.mh1);
 
-//Get Checkin
-router.get('/checkIn', checkingController.checkIn);
-//Post info checkin
+//#region Checkin --get post mh_1
+router.get('/checkIn', isAuth, checkingController.checkIn);
 router.post('/checkIn', checkingController.checkinPost);
-//Get info checkout
-router.get('/checkOut', checkingController.checkOut);
-//Post info checkin-Status
+// #endregion
+
+//#region Get post info checkout mh_1
+router.get('/checkOut', isAuth, checkingController.checkOut);
 router.post('/checkOut', checkingController.checkOutPost);
-//Get absent
-router.get('/absent', checkingController.absent);
-//Post absent 
+//#endgion
+
+//#region Get Post absent mh_1
+router.get('/absent', isAuth, checkingController.absent);
 router.post('/absent', checkingController.absentPost);
-//Get Edit
-router.get('/edit', checkingController.edit);
+//#endregion
+
+//#region Edit Post Edit Img mh_2
+router.get('/edit', isAuth, checkingController.edit);
 //Get Edit IMG
-router.get('/addNew/:employeeId', checkingController.getEditImg);
-//Post Edit Img
+router.get('/addNew/:employeeId', isAuth, checkingController.getEditImg);
+//Post img edit
 router.post('/addNew', checkingController.postEditEmployee);
+//#endregion
+
+//#region Search mh_3
 //Get Search
-router.get('/search', checkingController.search);
+router.get('/search', isAuth, checkingController.search);
 //Post => Search
 router.post('/search', checkingController.searchPost);
+//#endregion
+
+//#region Covid mh_4
 //Get Covid
-router.get('/covid', checkingController.covid);
+router.get('/covid', isAuth, checkingController.covid);
 //Post Covid 
 router.post('/covid', checkingController.covidPost);
-//Get Manager
-router.get("/manager", checkingController.managerGet);
+//#endregion
 
+//#region Manager mh_5
+router.get('/manager', isAuth, checkingController.managerGet);
 
+//#endregion
 
 module.exports = router;
