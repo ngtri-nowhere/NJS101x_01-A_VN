@@ -25,12 +25,12 @@
                                     <%} %>
                     </p>
                     <p>Thời gian kết thúc:<% if(pro !=null) { %>
-                            <%= pro.items.slice(-1)[0].endtime %>
+                            <%= pro[0].items.slice(-1)[0].endtime %>
                                 <% } else { %> Tháng này không có dữ liệu <% } %>
                     </p>
                     <p>Số giờ được tính làm thêm:
                         <% if(pro !=null) { %>
-                            <%= pro.overTime %> giờ
+                            <%= pro[0].overTime %> giờ
                                 <% } else { %> Tháng này không có dữ liệu <% } %>
                     </p>
                     <p>Lương tháng: <%= salary %>

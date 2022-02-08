@@ -319,171 +319,220 @@ exports.postEditEmployee = (req, res, next) => {
 
 //#region GET SEACH Employee mh_3
 exports.search = (req, res, next) => {
-    const absentSign = 12 - req.emp.annualLeave
+    const empId = req.session.user._id
 
-    // get all hourLeave in month 
-    const hourLeave = (req.emp.listAbsent.map(i => {
-        while (i.dayoff.getMonth() + 1 == currentMonth) {
-            let hoursnum = 0;
-            return hoursnum += i.hourNum
-        }
-    }))
-    const totalhourLeave = hourLeave.reduce((a, b) => {
-        return a + b
-    }, 0)
-    // ---------  total hourLeave annual in a month
+    Employee.findById(empId).then(emp => {
+        const absentSign = 12 - emp.annualLeave
+        // get all hourLeave in month 
+        const hourLeave = (emp.listAbsent.map(i => {
+            while (i.dayoff.getMonth() + 1 == currentMonth) {
+                let hoursnum = 0;
+                return hoursnum += i.hourNum
+            }
+        }))
+        console.log(hourLeave)
+        const xHourLeave = hourLeave.filter(x => {
+            return x !== undefined
+        })
+        console.log(xHourLeave)
+        const totalhourLeave = xHourLeave.reduce((a, b) =>
+            a + b
+            , 0)
+        console.log("totalhourLeave " + totalhourLeave)
+        // ---------  total hourLeave annual in a month
 
-    // get all overtime have in a month
-    const getOvertime = (req.checkinout.map(i => {
-        while (i.month == currentMonth) {
-            let overwork = 0;
-            return overwork += i.overTime
-        }
-    }));
-    const totalOvertime = getOvertime.reduce((a, b) => {
-        return a + b
-    }, 0);
+        // get all overtime have in a month
+        const getOvertime = req.checkinout.map(check => {
+            while (check.userId.toString() == emp._id.toString() && check.month == currentMonth) {
+                let numberOverTime = 0;
+                return numberOverTime += check.overTime
+            }
+        })
+        // loại bỏ những  undefined khi chạy điều kiện qua map
+        const xOverTime = getOvertime.filter(x => {
+            return x !== undefined
+        })
+        console.log(xOverTime)
+        const totalOvertime = xOverTime.reduce((a, b) => {
+            return a + b
+        }, 0)
+        console.log("Total Over Time " + totalOvertime)
+        // -- total OverTime get by sum of all day 
 
-    // -- total OverTime get by sum of all day 
+        //get all hourworking in day
+        const getHour = (req.checkinout.map(i => {
+            while (i.userId.toString() == emp._id.toString() && i.month == currentMonth) {
+                let fullHour = 0;
+                return fullHour += i.totalHrs
+            }
+        }))
+        // loại bỏ những  undefined khi chạy điều kiện qua map
+        const xGetHour = getHour.filter(x => {
+            return x !== undefined
+        })
+        console.log(xGetHour);
+        const totalHourWork = xGetHour.reduce((a, b) => {
+            return a + b;
+        }, 0)
+        console.log("Total hour work" + totalHourWork)
+        // --  total hour working in month
 
-    //get all hourworking in day
-    const getHour = (req.checkinout.map(i => {
-        while (i.month == currentMonth) {
-            let fullHour = 0;
-            return fullHour += i.totalHrs
-        }
-    }))
-    const totalHourWork = getHour.reduce((a, b) => {
-        return a + b;
-    }, 0)
+        // tạo số giờ tối thiểu cần thiết trong tháng
+        const standardHour = (req.checkinout.map(i => {
+            while (i.userId.toString() == emp._id.toString() && i.month == currentMonth) {
+                return i.day
+            }
+        }))
+        const xStandardHour = standardHour.filter(x => {
+            return x !== undefined
+        })
+        console.log(xStandardHour.length)
+        const standardAMonth = xStandardHour.length * 8
+        console.log(standardAMonth + " gio lam can thiet cua mot thang")
+        //tạo salaryMonth
+        console.log((totalOvertime - (standardAMonth - totalHourWork) + totalhourLeave) * 200000)
+        const salaryMonth = (emp.salaryScale * 3000000) + ((totalOvertime - (standardAMonth - totalHourWork) + totalhourLeave) * 200000)
+        console.log(salaryMonth)
 
-    // --  total hour working in month
+        const checkNow = req.checkinout.map(i => {
+            if (i.userId.toString() == emp._id.toString() && i.day == currentDay) {
+                return i
+            }
+        })
+        const xCheckNow = checkNow.filter(i => {
+            return i !== undefined
+        })
+        console.log(xCheckNow[0])
 
-    // tạo số giờ tối thiểu cần thiết trong tháng
-    const standardHour = (req.checkinout.map(i => {
-        while (i.month == currentMonth) {
-            let sorthour = 0
-            return sorthour = req.checkinout.length * 8
-        }
-    }))
-    const standardAMonth = standardHour[0]
-
-    //tạo salaryMonth
-    const salaryMonth = (req.emp.salaryScale * 3000000) + ((totalOvertime - (totalHourWork - standardAMonth) + totalhourLeave) * 200000)
-    console.log(salaryMonth)
-
-    console.log(req.emp)
-    console.log(req.empCheck)
-    console.log(req.checkinout.length)
-
-    res.render('mh_3', {
-        pageTitle: "Search Employee info",
-        path: '/search',
-        prods: req.emp,
-        prod: req.checkinout,
-        pro: req.empCheck,
-        absent: absentSign,
-        salary: salaryMonth,
-    });
+        res.render('mh_3', {
+            pageTitle: "Search Employee info",
+            path: '/search',
+            prods: emp,
+            prod: req.checkinout,
+            pro: xCheckNow[0],
+            absent: absentSign,
+            salary: salaryMonth,
+        });
+    }).catch(err => {
+        console.log(err)
+    })
 }
 //#endregion
 
 //#region POST SEACH Employee mh_3
 exports.searchPost = (req, res, next) => {
     const pickMonth = req.body.pickmonth // get pick month
+    const empId = req.session.user._id
 
-    empCheckin = req.empCheck
-    if (empCheckin.month != pickMonth) {
-        empCheckin = null
-    } else {
-        empCheckin = empCheckin
-    }
-    // console.log(empCheckin + "this is empCheckin")
-    prodCheck = req.checkinout
-    if (prodCheck.month != pickMonth) {
-        prodCheck = null
-    } else {
-        prodCheck = prodCheck
-    }
+    Employee.findById(empId).then(emp => {
+        // tạo pro để render . là lượt checkinnout vừa rồi
 
-
-    // get all hourLeave in month 
-    const hourLeave = (req.emp.listAbsent.map(i => {
-        while (i.dayoff.getMonth() + 1 == pickMonth) {
-            if (i.dayoff.getMonth() + 1 == null) {
-                hoursnum = 0;
-            }
-            let hoursnum = 0;
-            return hoursnum += i.hourNum
+        let filterEmpCheck = req.checkinout.filter(e => {
+            return e.userId.toString() == emp._id.toString() && e.day == currentDay && e.month == currentMonth
+        })
+        console.log(filterEmpCheck[0].month + "current month" + pickMonth)
+        if (filterEmpCheck[0].month != pickMonth) {
+            filterEmpCheck = null
+        } else {
+            filterEmpCheck = filterEmpCheck
         }
-    }))
-    const totalhourLeave = hourLeave.reduce((a, b) => {
-        return a + b
-    }, 0)
-    console.log(totalhourLeave)
-    // ---------  total hourLeave annual in a month
-
-    // get all overtime have in a month
-    const getOvertime = (req.checkinout.map(i => {
-        while (i.month == pickMonth) {
-            if (i.month == null) {
-                overwork = 0;
-            }
-            let overwork = 0;
-            return overwork += i.overTime
+        console.log(filterEmpCheck[0].items)
+        prodCheck = req.checkinout
+        if (prodCheck.month != pickMonth && prodCheck.userId == emp._id) {
+            prodCheck = null
+        } else if (prodCheck.month == pickMonth && prodCheck.userId == emp._id) {
+            prodCheck = prodCheck
         }
-    }));
-    const totalOvertime = getOvertime.reduce((a, b) => {
-        return a + b
-    }, 0);
-    console.log(totalOvertime);
-    // -- total OverTime get by sum of all day 
-
-    //get all hourworking in day
-    const getHour = (req.checkinout.map(i => {
-        while (i.month == pickMonth) {
-            if (i.month == null) {
-                fullHour = 0;
+        // get all hourLeave in month 
+        const hourLeave = (emp.listAbsent.map(i => {
+            while (i.dayoff.getMonth() + 1 == pickMonth) {
+                if (i.dayoff.getMonth() + 1 == null) {
+                    hoursnum = 0;
+                }
+                let hoursnum = 0;
+                return hoursnum += i.hourNum
             }
-            let fullHour = 0;
-            return fullHour += i.totalHrs
-        }
-    }))
-    const totalHourWork = getHour.reduce((a, b) => {
-        return a + b;
-    }, 0)
-    console.log(totalHourWork + "this is totalHourWork in month");
-    // --  total hour working in month
+        }))
+        const xHourLeave = hourLeave.filter(x => {
+            return x !== undefined
+        })
+        const totalhourLeave = xHourLeave.reduce((a, b) => {
+            return a + b
+        }, 0)
 
-    // tạo số giờ tối thiểu cần thiết trong tháng
-    const standardHour = (req.checkinout.map(i => {
-        while (i.month == pickMonth) {
-            if (i.month == null) {
-                sorthour = 0;
+        console.log(totalhourLeave + " this is totalhourLeave")
+        // ---------  total hourLeave annual in a month
+        // get all overtime have in a month
+        const getOvertime = (req.checkinout.map(i => {
+            while (i.month == pickMonth && i.userId.toString() == emp._id.toString()) {
+                if (i.month == null) {
+                    overwork = 0;
+                }
+                let overwork = 0;
+                return overwork += i.overTime
             }
-            let sorthour = 0
-            return sorthour = req.checkinout.length * 8
+        }));
+        // tạo filter để bỏ những undefind
+        const xGetOvertime = getOvertime.filter(x => {
+            return x !== undefined
+        })
+        const totalOvertime = xGetOvertime.reduce((a, b) => {
+            return a + b
+        }, 0);
+        console.log(totalOvertime + " total Overtime");
+        // -- total OverTime get by sum of all day 
+
+        //get all hourworking in day
+        const getHour = (req.checkinout.map(i => {
+            while (i.month == pickMonth && i.userId.toString() == emp._id.toString()) {
+                if (i.month == null) {
+                    fullHour = 0;
+                }
+                let fullHour = 0;
+                return fullHour += i.totalHrs
+            }
+        }))
+        const xgetHour = getHour.filter(x => {
+            return x !== undefined
+        })
+
+        const totalHourWork = xgetHour.reduce((a, b) => {
+            return a + b;
+        }, 0)
+        console.log(totalHourWork + "this is totalHourWork in month");
+        // --  total hour working in month
+
+        // tạo số giờ tối thiểu cần thiết trong tháng
+        const standardHour = (req.checkinout.map(i => {
+            while (i.month == pickMonth && i.userId.toString() == emp._id.toString()) {
+                return i.day
+            }
+        }))
+        const xStandardHour = standardHour.filter(x => {
+            return x !== undefined
+        })
+        const standardAMonth = (xStandardHour.length) * 8
+        console.log(standardAMonth + " số giờ phải làm")
+
+        //tạo salaryMonth
+        let salaryMonth
+        salaryMonth = (emp.salaryScale * 3000000) + ((totalOvertime - (totalHourWork - standardAMonth) + totalhourLeave) * 200000)
+        if (standardAMonth != NaN || standardAMonth != undefined || standardAMonth != null) {
+        } else {
+            salaryMonth = "Noooooooooooooooooooooooooooooo"
         }
-    }))
-    const standardAMonth = standardHour[0]
-    console.log(standardAMonth)
+        console.log(salaryMonth)
 
-    //tạo salaryMonth
-    let salaryMonth
-    salaryMonth = (req.emp.salaryScale * 3000000) + ((totalOvertime - (totalHourWork - standardAMonth) + totalhourLeave) * 200000)
-    if (standardAMonth != NaN || standardAMonth != undefined || standardAMonth != null) {
-    } else {
-        salaryMonth = "Noooooooooooooooooooooooooooooo"
-    }
-    console.log(salaryMonth)
-
-    res.render("mh_3Status", {
-        pageTitle: "Employee Search info",
-        path: "/search",
-        prods: req.emp,
-        pro: empCheckin,
-        pr: prodCheck,
-        salary: salaryMonth
+        res.render("mh_3Status", {
+            pageTitle: "Employee Search info",
+            path: "/search",
+            prods: emp,
+            pro: filterEmpCheck,
+            pr: prodCheck,
+            salary: salaryMonth
+        })
+    }).catch(err => {
+        console.log(err)
     })
 }
 // #endregion

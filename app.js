@@ -107,7 +107,8 @@ app.use((req, res, next) => {
 
 // #region CheckinOut module currentTime => empCheck
 app.use((req, res, next) => {
-    const empId = req.emp._id;
+
+    const empId = req.emp
     const currentDay = new Date().getDate();
     const currentMonth = new Date().getMonth() + 1;
     CheckInOut.findOne({
@@ -119,6 +120,7 @@ app.use((req, res, next) => {
         next();
     })
         .catch(err => console.log(err));
+
 })
 //  #endregion
 
