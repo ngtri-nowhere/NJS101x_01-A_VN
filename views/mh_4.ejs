@@ -1,12 +1,11 @@
 <%- include('./head.ejs') %>
-    <link rel="stylesheet" href="../css/mh_2.css">
+    <link rel="stylesheet" href="../css/mh_4.css">
     </head>
 
     <body>
         <%- include('./navigation.ejs') %>
             <main>
                 <form action="/covid" method="POST">
-
                     <label for="dk_thannhiet">
                         <h3>Đăng Ký Thông Tin Thân Nhiệt</h3>
                     </label>
@@ -25,5 +24,10 @@
                         <p>Ngày Âm Tính: <input id="covid_history_end" name="covid_historyNegative" type="date"></p>
                         <button class="btn" type="submit" class="btn_covid" id="btn_covid">Đăng Ký</button>
                 </form>
+                <div class="admin__box">
+                    <% if (isAdmin) { %>
+                        <a href="/detailCovid" class="btn" name="detailCovid" for="detailCovid">Xem nhân viên</a>
+                        <% } %>
+                </div>
             </main>
             <%- include('./end.ejs') %>

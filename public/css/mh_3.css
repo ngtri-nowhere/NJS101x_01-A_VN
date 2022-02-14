@@ -1,3 +1,6 @@
+* {
+    box-sizing:border-box;
+}
 main {
     align-items: center;
     align-content: center;
@@ -9,10 +12,31 @@ main {
     height:30px;
     text-align: center;
     cursor: pointer;
+    padding-bottom:20px;
+    margin-bottom:20px;
 }
 .name__employee:hover {
     letter-spacing:3px;
     transition: 0.3s ease-in-out;
 }
-
+.info__employee{
+    padding-top:20px;
+    margin-top:20px;
+}
+.checkinout__mongodb {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 2px 3.7px 3.7px hsl(0deg 0% 0% / 0.44);
+    max-width: 300px;
+    text-align:left;
+    padding-left:5px;
+    justify-content:space-between;
+    display:flex !important;
+    flex:1 1 auto !important;
+    padding:10px;
+    margin:10px;
+}
+.manager__container {
+    display:flex
+}
 

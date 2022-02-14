@@ -1,0 +1,70 @@
+<%- include('./head.ejs') %>
+    <link rel="stylesheet" href="../css/mh_3.css">
+    </head>
+
+    <body>
+        <%- include('./navigation.ejs') %>
+            <main>
+                <% if(prod.length> 0) { %>
+                    <div class="manager__container">
+                        <div class="manager__tab">
+                            <h3>Manager Id:</h3>
+                            <p>
+                                <%= prods._id %>
+                            </p>
+                            <h3>Manager Name:</h3>
+                            <p>
+                                <%= prods.name %>
+                            </p>
+                        </div>
+                        <% for (let emp of prod) { %>
+
+                            <div class="checkinout__mongodb">
+                                <div class="checkinout__box">
+                                    <h5>Thời gian bắt đầu phiên này:</h5>
+                                    <p>
+                                        <%= emp.starttime %>
+                                    </p>
+                                    <h5>Làm việc tại: </h5>
+                                    <p>
+                                        <%= emp.location %>
+                                    </p>
+                                    <h5>Thời gian kết thúc đợt này:</h5>
+                                    <p>
+                                        <%= emp.endtime %>
+                                    </p>
+                                    <h5>Thời gian đã làm trong phiên này: </h5>
+                                    <p>
+                                        <%= emp.hours %>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <% } %>
+                    </div>
+                    <section class="pagination">
+                        <% if(hasPreviousPage) { %>
+                            <a href="?page=<%= previousPage %>">
+                                <%= previousPage %>
+                            </a>
+                            <%} %>
+                                <a href="?page=<%=currentPage %>" class="active">
+                                    <%= currentPage %>
+                                </a>
+                                <% if(hasNextPage) { %>
+                                    <a href="?page=<%= nextPage %>">
+                                        <%= nextPage %>
+                                    </a>
+                                    <% } %>
+                                        <% if( lastPage !==currentPage && nextPage !==lastPage) { %>
+                                            <a href="?page=<%= lastPage %>">
+                                                <%= lastPage %>
+                                            </a>
+                                            <%} %>
+                    </section>
+                    <%} else { %>
+                        <h1>No Working</h1>
+                        <% } %>
+
+            </main>
+            <%- include('./end.ejs') %>

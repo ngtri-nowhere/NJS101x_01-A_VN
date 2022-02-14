@@ -2,7 +2,15 @@ const Employee = require('../middleware/models/employee');
 const CheckInOut = require('../middleware/models/checkin-out');
 const Covid = require('../middleware/models/covid');
 
+const Paginate = require('../util/paginate');
 const fileHelper = require('../util/file')
+
+const fs = require("fs");
+const path = require("path");
+
+const PDFDocument = require("pdfkit");
+
+const ITEMS_PER_PAGE = 2;
 
 //Lấy date time values
 const currentDay = new Date().getDate();
@@ -356,7 +364,7 @@ exports.search = (req, res, next) => {
         const totalOvertime = xOverTime.reduce((a, b) => {
             return a + b
         }, 0)
-        console.log("Total Over Time " + totalOvertime)
+        console.log("Total OverTime " + totalOvertime)
         // -- total OverTime get by sum of all day 
 
         //get all hourworking in day
@@ -390,10 +398,11 @@ exports.search = (req, res, next) => {
         const standardAMonth = xStandardHour.length * 8
         console.log(standardAMonth + " gio lam can thiet cua mot thang")
         //tạo salaryMonth
-        console.log((totalOvertime - (standardAMonth - totalHourWork) + totalhourLeave) * 200000)
+
         const salaryMonth = (emp.salaryScale * 3000000) + ((totalOvertime - (standardAMonth - totalHourWork) + totalhourLeave) * 200000)
         console.log(salaryMonth)
 
+        //  lấy session vừa gần nhất để lấy kết thúc
         const checkNow = req.checkinout.map(i => {
             if (i.userId.toString() == emp._id.toString() && i.day == currentDay) {
                 return i
@@ -402,8 +411,17 @@ exports.search = (req, res, next) => {
         const xCheckNow = checkNow.filter(i => {
             return i !== undefined
         })
-        console.log(xCheckNow[0])
-
+        // end
+        // lấy session đầu tiên của user này
+        const getCheckInOut = req.checkinout.map(i => {
+            if (i.userId.toString() == emp._id.toString()) {
+                return i
+            }
+        })
+        const xgetCheckInOut = getCheckInOut.filter(i => {
+            return i !== undefined
+        })
+        // end
         res.render('mh_3', {
             pageTitle: "Search Employee info",
             path: '/search',
@@ -411,13 +429,74 @@ exports.search = (req, res, next) => {
             prod: req.checkinout,
             pro: xCheckNow[0],
             absent: absentSign,
+            overTime: totalOvertime,
             salary: salaryMonth,
+            startTime: xgetCheckInOut[0].items[0]
         });
     }).catch(err => {
         console.log(err)
     })
 }
 //#endregion
+
+//#region GET SEACH Employee mh_3 phân trang
+exports.getSearchPage = (req, res, next) => {
+    const page = +req.query.page || 1;
+    const empId = req.session.user._id;
+    let managerCheck;
+    const ITEMS_PER_PAGE = 2;
+
+    Employee.findById(empId)
+        .then(myEmp => {
+            // #region lấy manager quản lý emp này
+            if (myEmp.isAdmin == true) {
+                managerCheck = myEmp
+            } else {
+                const myManager = req.emp.filter(x => {
+                    return x.isAdmin == true && x.empList.filter(y => {
+                        return y.empId.toString() == empId._id.toString()
+                    });
+                });
+                managerCheck = myManager[0]
+            }
+            // #endregion
+            CheckInOut.find({ userId: req.session.user._id }).select('items')
+                .then(result => {
+                    letArray = []
+                    for (let i of result) {
+                        for (let y of i.items) {
+                            letArray.push(y)
+                        }
+                    }
+                    return letArray
+                })
+                .then(myResult => {
+                    function paginate(array, page_size, page_number) {
+                        return array.slice((page_number - 1) * page_size, page_number * page_size)
+                    }
+                    let mything = []
+                    console.log(paginate(myResult, ITEMS_PER_PAGE, page))
+
+                    res.render('mh_3Page', {
+                        pageTitle: "Search details page",
+                        path: "/searchPage",
+                        prods: managerCheck,
+                        prod: paginate(myResult, ITEMS_PER_PAGE, page),
+                        currentPage: page,
+                        hasNextPage: ITEMS_PER_PAGE * page < myResult.length,
+                        hasPreviousPage: page > 1,
+                        nextPage: page + 1,
+                        previousPage: page - 1,
+                        lastPage: Math.ceil(myResult.length / ITEMS_PER_PAGE)
+                    });
+                })
+
+        }).catch(err => {
+            console.log(err)
+        })
+
+}
+// #endregion
 
 //#region POST SEACH Employee mh_3
 exports.searchPost = (req, res, next) => {
@@ -427,22 +506,58 @@ exports.searchPost = (req, res, next) => {
     Employee.findById(empId).then(emp => {
         // tạo pro để render . là lượt checkinnout vừa rồi
 
+        // start thời gian kết thúc
         let filterEmpCheck = req.checkinout.filter(e => {
-            return e.userId.toString() == emp._id.toString() && e.day == currentDay && e.month == currentMonth
+            return e.userId.toString() == emp._id.toString() && e.month == currentMonth
         })
-        console.log(filterEmpCheck[0].month + "current month" + pickMonth)
-        if (filterEmpCheck[0].month != pickMonth) {
-            filterEmpCheck = null
+        resultFilter = []
+        for (let e of filterEmpCheck) {
+            if (e.month == pickMonth) {
+                resultFilter.push(e)
+            } else (
+                resultFilter = null
+            )
+        }
+        console.log(resultFilter)
+        let getEndday;
+        let userEndDay;
+        let prodEndDay;
+        if (resultFilter !== null) {
+            getEndday = resultFilter.slice(-1)
+            userEndDay = getEndday[0].items.slice(-1)
+            prodEndDay = userEndDay[0].endtime
         } else {
-            filterEmpCheck = filterEmpCheck
+            prodEndDay = null
         }
-        console.log(filterEmpCheck[0].items)
-        prodCheck = req.checkinout
-        if (prodCheck.month != pickMonth && prodCheck.userId == emp._id) {
-            prodCheck = null
-        } else if (prodCheck.month == pickMonth && prodCheck.userId == emp._id) {
-            prodCheck = prodCheck
+        // end => prodEndDay
+
+        // start tạo thời gian bắt đầu
+        prodCheck = req.checkinout.filter(pr => {
+            return pr.userId.toString() == emp._id.toString() && pr.month == currentMonth
+        })
+        resultprodCheck = []
+        for (let p of prodCheck) {
+            if (p.month == pickMonth) {
+                resultprodCheck.push(p)
+            } else {
+                resultprodCheck = null
+            }
         }
+        console.log(resultprodCheck)
+        let getStartDay
+        let userStartDay
+        let prodStartDay
+        if (resultprodCheck !== null) {
+            getStartDay = resultprodCheck[0]
+            userStartDay = getStartDay.items[0]
+            prodStartDay = userStartDay.starttime
+        }
+        else {
+            resultprodCheck = null
+        }
+
+        // end
+
         // get all hourLeave in month 
         const hourLeave = (emp.listAbsent.map(i => {
             while (i.dayoff.getMonth() + 1 == pickMonth) {
@@ -480,6 +595,13 @@ exports.searchPost = (req, res, next) => {
             return a + b
         }, 0);
         console.log(totalOvertime + " total Overtime");
+        let checkOverTime
+        if (resultprodCheck == null) {
+            checkOverTime = null
+        } else {
+            checkOverTime = totalOvertime
+        }
+
         // -- total OverTime get by sum of all day 
 
         //get all hourworking in day
@@ -495,7 +617,6 @@ exports.searchPost = (req, res, next) => {
         const xgetHour = getHour.filter(x => {
             return x !== undefined
         })
-
         const totalHourWork = xgetHour.reduce((a, b) => {
             return a + b;
         }, 0)
@@ -512,14 +633,17 @@ exports.searchPost = (req, res, next) => {
             return x !== undefined
         })
         const standardAMonth = (xStandardHour.length) * 8
+        let checkStandard
+        if (standardAMonth == 0) {
+            checkStandard = null
+        }
         console.log(standardAMonth + " số giờ phải làm")
-
         //tạo salaryMonth
         let salaryMonth
-        salaryMonth = (emp.salaryScale * 3000000) + ((totalOvertime - (totalHourWork - standardAMonth) + totalhourLeave) * 200000)
-        if (standardAMonth != NaN || standardAMonth != undefined || standardAMonth != null) {
+        if (checkStandard !== null) {
+            salaryMonth = (emp.salaryScale * 3000000) + ((totalOvertime - (standardAMonth - totalHourWork) + totalhourLeave) * 200000)
         } else {
-            salaryMonth = "Noooooooooooooooooooooooooooooo"
+            salaryMonth = "Không có"
         }
         console.log(salaryMonth)
 
@@ -527,9 +651,12 @@ exports.searchPost = (req, res, next) => {
             pageTitle: "Employee Search info",
             path: "/search",
             prods: emp,
-            pro: filterEmpCheck,
-            pr: prodCheck,
-            salary: salaryMonth
+            pro: resultFilter,
+            pr: resultprodCheck,
+            salary: salaryMonth,
+            prodTime: checkOverTime,
+            userEndTime: prodEndDay,
+
         })
     }).catch(err => {
         console.log(err)
@@ -537,19 +664,56 @@ exports.searchPost = (req, res, next) => {
 }
 // #endregion
 
-
 //#region GET COVID mh_4
 exports.covid = (req, res, next) => {
-    res.render('mh_4', {
-        pageTitle: "Covid Vaccine",
-        path: '/covid',
-    });
+    const empId = req.session.user._id
+
+    Employee.find({ _id: empId })
+        .then(myEmp => {
+            let checkAdmin = myEmp[0].isAdmin
+
+            res.render('mh_4', {
+                pageTitle: "Covid Vaccine",
+                path: '/covid',
+                isAdmin: checkAdmin
+            });
+        })
+        .catch(err => {
+            console.log(err)
+        })
 }
 //#endregion
 
+//#region GET COVID Detail mh_4
+exports.detailCovid = (req, res, next) => {
+    const empId = req.session.user._id
+    Employee.find({ _id: empId })
+        .then(myEmp => {
+            let infoCovid = []
+            myStaff = myEmp[0].empList
+
+            infoCovid = req.covi.filter(function (o1) {
+                return myStaff.some(function (o2) {
+                    return o1.userId.toString() === o2.empId.toString()
+                });
+            });
+            console.log(infoCovid);
+            res.render('mh_4detail', {
+                pageTitle: "Covid Employee info",
+                path: "/detailCovid",
+                prods: infoCovid,
+                prod: myEmp[0],
+            })
+        })
+        .catch(err => {
+            console.log(err)
+        })
+}
+// #endregion
+
 //#region POST Covid mh_4
 exports.covidPost = (req, res, next) => {
-    const empId = req.emp._id
+    const empId = req.session.user._id
     const dkThannhietngay = req.body.dk_thannhiet
     const dkThannhietGio = req.body.dk_thannhiet_gio
 

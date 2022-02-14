@@ -1,7 +1,7 @@
 const express = require('express');
 
 const checkingController = require('../controllers/checkin');
-const { body } = require('express-validator/check');
+
 const isAuth = require('../middleware/is-auth');
 
 const router = express.Router();
@@ -17,7 +17,7 @@ router.post('/checkIn', checkingController.checkinPost);
 //#region Get post info checkout mh_1
 router.get('/checkOut', isAuth, checkingController.checkOut);
 router.post('/checkOut', checkingController.checkOutPost);
-//#endgion
+//#endregion
 
 //#region Get Post absent mh_1
 router.get('/absent', isAuth, checkingController.absent);
@@ -35,6 +35,8 @@ router.post('/addNew', checkingController.postEditEmployee);
 //#region Search mh_3
 //Get Search
 router.get('/search', isAuth, checkingController.search);
+// Get Search Page
+router.get('/searchPage', isAuth, checkingController.getSearchPage);
 //Post => Search
 router.post('/search', checkingController.searchPost);
 //#endregion
@@ -42,6 +44,8 @@ router.post('/search', checkingController.searchPost);
 //#region Covid mh_4
 //Get Covid
 router.get('/covid', isAuth, checkingController.covid);
+//Get Covid More InFo
+router.get('/detailCovid', isAuth, checkingController.detailCovid);
 //Post Covid 
 router.post('/covid', checkingController.covidPost);
 //#endregion

@@ -15,13 +15,13 @@
                     <div class="info__employee">
                         <p>Ngày: <%= pro.day %>
                         </p>
-                        <p>Thời gian bắt đầu: <%= pro.items.slice(0)[0].starttime %>
+                        <p>Thời gian bắt đầu: <%= startTime.starttime %>
                         </p>
                         <p>Thời gian kết thúc:<%= pro.items.slice(-1)[0].endtime %>
                         </p>
                         <p>Nơi làm việc: <%= pro.items.slice(-1)[0].location %>
                         </p>
-                        <p>Số giờ được tính làm thêm: <%= pro.overTime %> giờ
+                        <p>Số giờ được tính làm thêm: <%= overTime %> giờ
                         </p>
                         <p>Số ngày nghĩ đăng ký: <%= absent %> ngày
                         </p>
@@ -49,7 +49,12 @@
                         </select>
                         <button class="btn" type="submit">Xem tháng</button>
                     </div>
-
+                    <label for="detail_search">
+                        <h3>Xem chi tiết phiên và quản lý</h3>
+                    </label>
+                    <a class="btn" name="detail_search" id="detail_search" href="/searchPage">
+                        Details
+                    </a>
                 </form>
             </main>
             <%- include('./end.ejs') %>

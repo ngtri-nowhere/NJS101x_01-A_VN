@@ -5,15 +5,15 @@
     <body>
         <%- include('./navigation.ejs') %>
             <main>
-                <h3>My Employee</h3>
                 <div class="name__employee">
-                    <p> Name:
+                    <h3>Name:</h3>
+                    <p>
                         <%= prods.name %>
                     </p>
                 </div>
                 <div class="info__employee">
                     <p>Số Ngày Làm: <% if(pr !=null) { %>
-                            <%= pr.length %>
+                            <%= pr.length %> ngày
                                 <% } else { %>
                                     Tháng này không có dữ liệu
                                     <% } %>
@@ -24,14 +24,18 @@
                                     Tháng này không có dữ liệu
                                     <%} %>
                     </p>
-                    <p>Thời gian kết thúc:<% if(pro !=null) { %>
-                            <%= pro[0].items.slice(-1)[0].endtime %>
-                                <% } else { %> Tháng này không có dữ liệu <% } %>
+                    <p>Thời gian kết thúc: <% if(userEndTime !=null) { %>
+                            <%=userEndTime %>
+                                <%} else { %>
+                                    Tháng này không có dữ liệu
+                                    <% } %>
                     </p>
-                    <p>Số giờ được tính làm thêm:
-                        <% if(pro !=null) { %>
-                            <%= pro[0].overTime %> giờ
-                                <% } else { %> Tháng này không có dữ liệu <% } %>
+                    <p>Số giờ được tính làm thêm: <% if(prodTime !=null) { %>
+                            <%= prodTime %> giờ
+                                <% } else { %>
+                                    Tháng này không có dữ liệu
+                                    <% } %>
+
                     </p>
                     <p>Lương tháng: <%= salary %>
                     </p>

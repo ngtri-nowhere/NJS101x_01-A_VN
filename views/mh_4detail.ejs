@@ -1,0 +1,54 @@
+<%- include('./head.ejs') %>
+    <link rel="stylesheet" href="../css/mh_4.css">
+    </head>
+
+    <body>
+        <%- include('./navigation.ejs') %>
+            <main>
+                <h3>ManagerName: <%= prod.name %>
+                </h3>
+                <div class="container__mh4">
+                    <% for (let user of prods) { %>
+                        <div class="staff__box">
+                            <h4>userId:</h4>
+                            <p>
+                                <%= user._id %>
+                            </p>
+                            <h4>Đăng ký thân nhiệt ngày :</h4>
+                            <p>
+                                <%= user.bodyTemday %>
+                            </p>
+                            <h4>Đăng ký thân nhiệt giờ :</h4>
+                            <p>
+                                <%=user.bodyTemhour %>
+                            </p>
+                            <h4>Vaccine mũi 1 ngày:</h4>
+                            <p>
+                                <%=user.vaccineDay1 %>
+                            </p>
+                            <h4>Vaccine mũi 1 loại:</h4>
+                            <p>
+                                <%= user.vaccineKind1 %>
+                            </p>
+                            <h4>Vaccine mũi 2 ngày:</h4>
+                            <p>
+                                <%=user.vaccineDay2 %>
+                            </p>
+                            <h4>Vaccine mũi 2 loại:</h4>
+                            <p>
+                                <%= user.vaccineKind2 %>
+                            </p>
+                            <h4>Ngày dương tính covid(nếu có):</h4>
+                            <p>
+                                <%= user.covidInfoEffect %>
+                            </p>
+                            <h4>Ngày âm tính covid(nếu có):</h4>
+                            <p>
+                                <%= user.covidInfoNega %>
+                            </p>
+                            <a class="btn">Xem dưới dạng PDK</a>
+                        </div>
+                        <% } %>
+                </div>
+            </main>
+            <%- include('./end.ejs') %>
