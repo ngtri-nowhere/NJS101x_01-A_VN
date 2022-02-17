@@ -46,13 +46,20 @@ router.post('/search', checkingController.searchPost);
 router.get('/covid', isAuth, checkingController.covid);
 //Get Covid More InFo
 router.get('/detailCovid', isAuth, checkingController.detailCovid);
+//Get Covid More InFo Invoice
+router.get('/detailCovid/:covidUser', isAuth, checkingController.getInvoice);
 //Post Covid 
 router.post('/covid', checkingController.covidPost);
 //#endregion
 
 //#region Manager mh_5
-router.get('/manager', isAuth, checkingController.managerGet);
-
+router.get('/manager', isAuth, checkingController.managerGet); // màn hình chính trang 5
+router.get('/managerError', isAuth, checkingController.managerGet); // lỗi không phải manager
+router.get('/manager/:staffId', isAuth, checkingController.getStaff); // list nhân viên
+router.get('/checkList/:checkId', isAuth, checkingController.getListCheck); // list phiên
+router.post('/delete-item', isAuth, checkingController.postDeleteCheck); // delete phiên
+router.post('/managerGetMonth', isAuth, checkingController.postPickMonth) // get month nhân viên
+router.post('/managerAproved', isAuth, checkingController.postAproved) // Post unAproved nhân viên
 //#endregion
 
 module.exports = router;

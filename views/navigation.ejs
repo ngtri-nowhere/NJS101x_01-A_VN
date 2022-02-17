@@ -12,10 +12,12 @@
                     employee</a>
             </li>
             <li class="main-header__item">
-                <a class="<%= path === '/search' ? 'active' : '' %>" href="/search">Search</a>
+                <a class="<%= (path === '/search' || path === '/searchPage') ? 'active' : '' %>"
+                    href="/search">Search</a>
             </li>
             <li class="main-header__item">
-                <a class="<%= path === '/covid' ? 'active' : '' %>" href="/covid">Covid info</a>
+                <a class="<%= (path === '/covid' || path === '/detailCovid') ? 'active' : '' %>" href="/covid">Covid
+                    info</a>
             </li>
             <li class="main-header__item">
                 <a class="<%= path === '/manager' ? 'active' : '' %>" href="/manager">Manager</a>

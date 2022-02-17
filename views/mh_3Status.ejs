@@ -37,7 +37,10 @@
                                     <% } %>
 
                     </p>
-                    <p>Lương tháng: <%= salary %>
+                    <p>Lương tháng: <% if(pr !=null) { %>
+                            <%= salary %> vnđ <% } else { %>
+                                    Tháng này không có dữ liệu
+                                    <% } %>
                     </p>
                 </div>
             </main>

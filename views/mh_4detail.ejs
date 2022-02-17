@@ -12,7 +12,7 @@
                         <div class="staff__box">
                             <h4>userId:</h4>
                             <p>
-                                <%= user._id %>
+                                <%= user.userId %>
                             </p>
                             <h4>Đăng ký thân nhiệt ngày :</h4>
                             <p>
@@ -46,7 +46,7 @@
                             <p>
                                 <%= user.covidInfoNega %>
                             </p>
-                            <a class="btn">Xem dưới dạng PDK</a>
+                            <a class="btn" href="/detailCovid/<%= user.userId %>">Xem dưới dạng PDK</a>
                         </div>
                         <% } %>
                 </div>

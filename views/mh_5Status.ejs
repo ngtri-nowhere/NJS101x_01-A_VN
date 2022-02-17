@@ -5,34 +5,63 @@
     <body>
         <%- include('./navigation.ejs') %>
             <main>
-                <form method="POST" action="/manager">
+                <form method="POST" action="/managerGetMonth">
                     <div class="form__control">
-                        <p>Name Employee:</p>
+                        <h4>Name Employee: </h4>
+                        <p>
+                            <%= prod.name %>
+                        </p>
 
-                        <p>Ngày:</p>
-                        <p>Số giờ được tính làm thêm:</p>
-                        <p>Số ngày nghĩ đăng ký:</p>
-                        <p>Thời gian bắt đầu:</p>
-                        <p>Thời gian kết thúc:</p>
-                        <a href="/manager" class="btn">Xoá giờ kết thúc</a>
-                        <p>Tổng số giờ đã làm tháng: </p>
-                        <p>Lương tháng:</p>
-                        <label name="pickmonth" for="pickmonth">Chọn tháng</label>
-                        <select id="pickmonth" name="pickmonth">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                            <option>5</option>
-                            <option>6</option>
-                            <option>7</option>
-                            <option>8</option>
-                            <option>9</option>
-                            <option>10</option>
-                            <option>11</option>
-                            <option>12</option>
-                        </select>
-                        <button type="subbmit" class="btn">Xem tháng</button>
+                        <h4>Số ngày đã làm: </h4>
+                        <p>
+                            <%= pro.length %> ngày
+                        </p>
+                        <h4>Số giờ được tính làm thêm: </h4>
+                        <p>
+                            <%=totalOvertime %> giờ
+                        </p>
+                        <h4>Số ngày nghĩ đăng ký: </h4>
+                        <p>
+                            <%= absent %> ngày
+                        </p>
+                        <h4> Thời gian bắt đầu: </h4>
+                        <p>
+                            <%= pro[0].items[0].starttime %>
+                        </p>
+                        <h4>Thời gian kết thúc: </h4>
+                        <% if (lastInOut !=null) { %>
+                            <p>
+                                <%=lastInOut %>
+                            </p>
+                            <% } else { %>
+                                <p>Chưa check-out</p>
+                                <% } %>
+                                    <a href="/checkList/<%= prod._id %>" class="btn">Xoá phiên</a>
+                                    <h4> Tổng số giờ đã làm tháng: </h4>
+                                    <p>
+                                        <%= totalHour%>
+                                    </p>
+                                    <h4>Lương tháng: </h4>
+                                    <p>
+                                        <%=salary %> vnđ
+                                    </p>
+                                    <label name="pickmonth" for="pickmonth">Chọn tháng</label>
+                                    <select id="pickmonth" name="pickmonth">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                        <option>5</option>
+                                        <option>6</option>
+                                        <option>7</option>
+                                        <option>8</option>
+                                        <option>9</option>
+                                        <option>10</option>
+                                        <option>11</option>
+                                        <option>12</option>
+                                    </select>
+                                    <button class="btn" type="submit">Xem tháng</button>
+                                    <input type="hidden" name="empId" value="<%= prod._id %>">
                     </div>
                 </form>
             </main>

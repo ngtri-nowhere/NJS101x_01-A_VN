@@ -6,15 +6,24 @@
         <%- include('./navigation.ejs') %>
             <main>
                 <form method="post" action="/manager">
+                    <h4>Manager Name: </h4>
+                    <p>
+                        <%= prod.name %>
+                    </p>
+                    <h4>List employee</h4>
                     <div class="container">
-                        <h4>Manager Name: </h4>
-                        <p>List employee:</p>
-                        <div class="emp__box">
-                            <p>name employee here</p>
-                            <img src="https://nypost.com/wp-content/uploads/sites/2/2020/12/yael-most-beautiful-video.jpg?quality=90&strip=all"
-                                alt="empImg">
-                            <button type=sumbit class="btn">Detail</button>
-                        </div>
+                        <% for(let emp of prods) {%>
+                            <div class="container__staff">
+                                <div class="emp__box">
+                                    <h4>Name:</h4>
+                                    <p>
+                                        <%= emp.name %>
+                                    </p>
+                                    <img src="<%= emp.imageUrl %>" alt="empImg">
+                                    <a class="btn" href="/manager/<%= emp._id %>">Detail</a>
+                                </div>
+                            </div>
+                            <% } %>
                     </div>
                 </form>
             </main>

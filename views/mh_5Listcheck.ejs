@@ -1,0 +1,60 @@
+<%- include('./head.ejs') %>
+    <link rel="stylesheet" href="../css/mh_5.css">
+    </head>
+
+    <body>
+        <%- include('./navigation.ejs') %>
+            <main>
+                <h4>Employee Name: <%= pro.name %>
+                </h4>
+                <h4>Những phiên đã checkin-out</h4>
+                <div class="container">
+                    <% for (let item of prod) { %>
+                        <div class="check__box">
+                            <h4>Thời gian bắt đầu: </h4>
+                            <p>
+                                <%=item.starttime %>
+                            </p>
+                            <h4>Nơi làm việc: </h4>
+                            <p>
+                                <%= item.location%>
+                            </p>
+                            <h4>Thời gian kết thúc: </h4>
+                            <p>
+                                <%= item.endtime %>
+                            </p>
+                            <h4>Số giờ trong phiên này: </h4>
+                            <p>
+                                <%=item.hours %>
+                            </p>
+                            <form action="/delete-item" method="POST">
+                                <input type="hidden" value="<%=item._id %>" name="itemId">
+                                <input type="hidden" value="<%= pro._id %>" name="staffId">
+                                <button class="btn" type="submit">Xoá Phiên này</button>
+                            </form>
+                        </div>
+                        <% } %>
+                </div>
+                <section class="pagination">
+                    <% if(hasPreviousPage) { %>
+                        <a href="?page=<%= previousPage %>">
+                            <%= previousPage %>
+                        </a>
+                        <%} %>
+                            <a href="?page=<%=currentPage %>" class="active">
+                                <%= currentPage %>
+                            </a>
+                            <% if(hasNextPage) { %>
+                                <a href="?page=<%= nextPage %>">
+                                    <%= nextPage %>
+                                </a>
+                                <% } %>
+                                    <% if( lastPage !==currentPage && nextPage !==lastPage) { %>
+                                        <a href="?page=<%= lastPage %>">
+                                            <%= lastPage %>
+                                        </a>
+                                        <%} %>
+                </section>
+
+            </main>
+            <%- include('./end.ejs') %>

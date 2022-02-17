@@ -1,0 +1,69 @@
+<%- include('./head.ejs') %>
+    <link rel="stylesheet" href="../css/mh_3.css">
+    </head>
+
+    <body>
+        <%- include('./navigation.ejs') %>
+            <main>
+                <form action="managerAproved" method="POST">
+                    <div class="name__employee">
+                        <h3>Tháng: <%=thisMonth %>
+                        </h3>
+
+                    </div>
+                    <div class="info__employee">
+                        <% if(prod !=null) { %>
+                            <h4>Số Ngày Làm: <%= prod.length %> Ngày
+                            </h4>
+                            <% } else {%>
+                                <h4>Số Ngày Làm: Không có dữ liệu tháng này
+                                </h4>
+                                <% } %>
+                                    <% if(prod !=null) { %>
+                                        <h4>Thời gian bắt đầu: <%= prod[0].items[0].starttime %>
+                                        </h4>
+                                        <% } else {%>
+                                            <h4>Thời gian bắt đầu: Không có dữ liệu tháng này
+                                            </h4>
+                                            <% } %>
+                                                <% if(prod !=null) { %>
+                                                    <h4>Thời gian kết thúc: <%= endCheck.endtime %>
+                                                    </h4>
+                                                    <% } else {%>
+                                                        <h4>Thời gian kết thúc: Không có dữ liệu
+                                                            tháng này
+                                                        </h4>
+                                                        <% } %>
+                                                            <% if(prod !=null) { %>
+                                                                <h4>Số giờ được tính làm thêm: <%= overTime %> giờ
+                                                                </h4>
+                                                                <% } else {%>
+                                                                    <h4>Số giờ được tính làm thêm:Không
+                                                                        có dữ
+                                                                        liệu
+                                                                        tháng này
+                                                                    </h4>
+                                                                    <% } %>
+                                                                        <% if(prod !=null) { %>
+                                                                            <h4>Lương tháng: <%= salary %>
+                                                                                    vnđ
+                                                                            </h4>
+                                                                            <% } else {%>
+                                                                                <h4>Lương tháng: Không có
+                                                                                    dữ liệu
+                                                                                    tháng này
+                                                                                </h4>
+                                                                                <% } %>
+                                                                                    <% if(prod !=null) { %>
+                                                                                        <button type="submit"
+                                                                                            class="btn">Xác nhận ngưng
+                                                                                            cấp quyền</button>
+                                                                                        <% } %>
+                                                                                            <input type="hidden"
+                                                                                                name="empId"
+                                                                                                value="<%=empId %>">
+                    </div>
+                </form>
+            </main>
+
+            <%- include('./end.ejs') %>

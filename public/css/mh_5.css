@@ -1,20 +1,39 @@
-.container {
+main {
     display:grid;
     justify-content:center;
     align-items:center;
+    text-align: center ;
+}
+.container {
+    display:flex;
+}
+.container__staff {
+    display:grid;
 }
 .emp__box{
-    border:1px solid;
+    border:1px solid #ccc;
     border-radius:20px;
-    width:300px !important;
-    height:400px !important;
+    box-shadow: 2px 3.7px 3.7px hsl(0deg 0% 0% / 0.44);
+    width:320px !important;
+    height:450px !important;
     text-align: center !important;
     justify-content:center;
     align-items:center;
+    margin:10px;
 }
 .emp__box img {
     width:300px !important;
     height:300px !important;
     object-fit:fill;
     border-radius: 20px;
+}
+.check__box {
+    border:1px solid #ccc;
+    border-radius:20px;
+    box-shadow: 2px 3.7px 3.7px hsl(0deg 0% 0% / 0.44);
+    width:320px !important;
+    text-align:center;
+    justify-content:center;
+    align-items:center;
+    margin:10px;
 }

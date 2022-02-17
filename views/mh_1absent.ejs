@@ -17,34 +17,37 @@
                     </div>
                 </div>
                 <form class="form__checkin" action="/absent" method="POST">
-                    <div class="nghi_phep">
-                        <div class="nghi_phepOn">
-                            <label for="annualLeave">Chọn ngày</label>
-                            <input type="date" id="annualLeave" name="annualLeave" required>
-                            <label for="annualLeaveTime">Chọn Số Giờ OFF</label>
-                            <select id="annualLeaveTime" name="annuaLeaveTime">
-                                <option>1.0 </option>
-                                <option>1.5 </option>
-                                <option>2.0 </option>
-                                <option>2.5 </option>
-                                <option>3.0 </option>
-                                <option>3.5 </option>
-                                <option>4.0 </option>
-                                <option>4.5 </option>
-                                <option>5.0 </option>
-                                <option>5.5 </option>
-                                <option>6.0 </option>
-                                <option>6.5 </option>
-                                <option>7.0 </option>
-                                <option>7.5 </option>
-                                <option>8.0 </option>
-                            </select>
-                            <label for="reasonLeaveTime">Lý Do</label>
-                            <input type="textarea" id="reasonLeaveTime" name="reasonLeaveTime">
-                            <button type="submit" class="btn" id="submitNghiPhep">Đăng Ký</button>
+                    <% if(prods.isAproved==true) {%>
+                        <div class="nghi_phep">
+                            <div class="nghi_phepOn">
+                                <label for="annualLeave">Chọn ngày</label>
+                                <input type="date" id="annualLeave" name="annualLeave" required>
+                                <label for="annualLeaveTime">Chọn Số Giờ OFF</label>
+                                <select id="annualLeaveTime" name="annuaLeaveTime">
+                                    <option>1.0 </option>
+                                    <option>1.5 </option>
+                                    <option>2.0 </option>
+                                    <option>2.5 </option>
+                                    <option>3.0 </option>
+                                    <option>3.5 </option>
+                                    <option>4.0 </option>
+                                    <option>4.5 </option>
+                                    <option>5.0 </option>
+                                    <option>5.5 </option>
+                                    <option>6.0 </option>
+                                    <option>6.5 </option>
+                                    <option>7.0 </option>
+                                    <option>7.5 </option>
+                                    <option>8.0 </option>
+                                </select>
+                                <label for="reasonLeaveTime">Lý Do</label>
+                                <input type="textarea" id="reasonLeaveTime" name="reasonLeaveTime">
+                                <button type="submit" class="btn" id="submitNghiPhep">Đăng Ký</button>
+                            </div>
                         </div>
-                    </div>
+                        <% } else { %>
+                            Đã ngưng cấp quyền
+                            <% }%>
                 </form>
-
             </main>
             <%- include('./end.ejs') %>

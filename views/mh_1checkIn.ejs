@@ -29,7 +29,9 @@
                             <option>Home</option>
                             <option>On Site</option>
                         </select>
-                        <button class="btn" type="submit" id="submitdiemDanh">Gữi Đi</button>
+                        <% if(prods.isAproved==true) {%>
+                            <button class="btn" type="submit" id="submitdiemDanh">Gữi Đi</button>
+                            <%} %>
                     </div>
                 </form>
             </main>

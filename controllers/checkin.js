@@ -116,8 +116,8 @@ exports.checkinPost = (req, res, next) => {
 // #region GET CHECKOUT
 //mh-1 get -checkout
 exports.checkOut = (req, res, next) => {
-
-    Employee.find().then(emp => {
+    const empId = req.session.user._id
+    Employee.findById(empId).then(emp => {
         res.render('mh_1checkOut', {
             pageTitle: "CheckOut",
             path: "/checkOut",
@@ -193,7 +193,8 @@ exports.checkOutPost = (req, res, next) => {
 
 //#region GET Absent
 exports.absent = (req, res, next) => {
-    Employee.find().then(emp => {
+    const empId = req.session.user._id
+    Employee.findById(empId).then(emp => {
         res.render('mh_1absent', {
             pageTitle: "Absent",
             path: '/absent',
@@ -325,6 +326,7 @@ exports.postEditEmployee = (req, res, next) => {
 }
 //#endregion
 
+//mh-3
 //#region GET SEACH Employee mh_3
 exports.search = (req, res, next) => {
     const empId = req.session.user._id
@@ -419,8 +421,9 @@ exports.search = (req, res, next) => {
             }
         })
         const xgetCheckInOut = getCheckInOut.filter(i => {
-            return i !== undefined
+            return i !== undefined && i.items.length != 0
         })
+        console.log(xgetCheckInOut[0])
         // end
         res.render('mh_3', {
             pageTitle: "Search Employee info",
@@ -664,6 +667,7 @@ exports.searchPost = (req, res, next) => {
 }
 // #endregion
 
+//mh-4
 //#region GET COVID mh_4
 exports.covid = (req, res, next) => {
     const empId = req.session.user._id
@@ -697,7 +701,6 @@ exports.detailCovid = (req, res, next) => {
                     return o1.userId.toString() === o2.empId.toString()
                 });
             });
-            console.log(infoCovid);
             res.render('mh_4detail', {
                 pageTitle: "Covid Employee info",
                 path: "/detailCovid",
@@ -710,6 +713,47 @@ exports.detailCovid = (req, res, next) => {
         })
 }
 // #endregion
+
+//#region GET COVID Detail mh_4 Invoice
+exports.getInvoice = (req, res, next) => {
+    const covidId = req.params.covidUser
+
+    Covid.find({ userId: covidId })
+        .then(covi => {
+            console.log(covi[0])
+            if (!covi) {
+                return next(new Error("No such covid info"));
+            }
+
+            const invoiceName = 'invoice-' + covidId + '.pdf';
+            const invoicePath = path.join('data', 'invoices', invoiceName);
+
+            const pdfDoc = new PDFDocument();
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'attachment;filename="' + invoiceName + '"')
+            pdfDoc.pipe(fs.createWriteStream(invoicePath))
+            pdfDoc.pipe(res);
+            pdfDoc.fontSize(25).text("Employee Id: " + covi[0].userId, {
+                underline: true
+            });
+            pdfDoc.text('-------------------')
+            pdfDoc.fontSize(10).text("Temperature registration date: " + covi[0].bodyTemday)
+            pdfDoc.fontSize(10).text("Temperature registration time: " + covi[0].bodyTemhour)
+            pdfDoc.fontSize(10).text("Registration Date for first vaccine: " + covi[0].vaccineDay1)
+            pdfDoc.fontSize(10).text("Types of Vaccines first: " + covi[0].vaccineKind1)
+            pdfDoc.fontSize(10).text("Registration Date for second vaccine: " + covi[0].vaccineDay2)
+            pdfDoc.fontSize(10).text("Types of Vaccines second: " + covi[0].vaccineKind2)
+            pdfDoc.fontSize(10).text("Positive date(if): " + covi[0].covidInfoEffect)
+            pdfDoc.fontSize(10).text("Negative (if): " + covi[0].covidInfoNega)
+            pdfDoc.text('-------------------')
+
+            pdfDoc.end()
+        })
+        .catch(err => {
+            console.log(err)
+        })
+}
+//#endregion
 
 //#region POST Covid mh_4
 exports.covidPost = (req, res, next) => {
@@ -756,11 +800,300 @@ exports.covidPost = (req, res, next) => {
 }
 //#endregion
 
+//mh-5
 // #region GET Manager mh_5
 exports.managerGet = (req, res, next) => {
-    res.render("mh_5", {
-        pageTitle: "Manager Site",
-        path: "/manager",
-    });
+    const empId = req.session.user._id;
+    Employee.find({ _id: empId })
+        .then(myEmp => {
+            if (myEmp[0].isAdmin == true) {
+                let infoStaff = []
+                myStaff = myEmp[0].empList
+                infoStaff = req.emp.filter(function (o1) {
+                    return myStaff.some(function (o2) {
+                        return o1._id.toString() === o2.empId.toString()
+                    });
+                });
+                console.log(infoStaff)
+                res.render("mh_5", {
+                    pageTitle: "Manager Site",
+                    path: "/manager",
+                    prod: myEmp[0],
+                    prods: infoStaff
+                });
+            } else {
+                res.render("mh_5Error", {
+                    pageTitle: "Error user",
+                    path: "/managerError"
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+        })
 }
 // #endregion
+
+// #region GET mh_5 Manager Staff
+exports.getStaff = (req, res, next) => {
+    const staffId = req.params.staffId
+    Employee.findById(staffId)
+        .then(myStaff => {
+            const absentSign = 12 - myStaff.annualLeave
+            CheckInOut.find({
+                userId: staffId,
+            }).then(infoCheck => {
+                let containerMonth = []
+                for (let myCheck of infoCheck) {
+                    if (myCheck.month == currentMonth && myCheck.items.length != 0) {
+                        containerMonth.push(myCheck)
+                    }
+                }
+
+                let totalOvertime = 0
+                containerMonth.map(e => {
+                    totalOvertime += e.overTime
+                })
+                // lấy thời gian kết thúc là thời gian checkout cuối cùng
+                lastCheck = containerMonth.slice(-1)
+
+                // #start tạo thời gian tối thiểu theo số ngày đã checkin làm
+                let standardAmonth = containerMonth.length * 8
+                // #end
+                // #start tạo tổng thời gian đã làm trong phiên
+                let totalHourWork = 0
+                containerMonth.map(e => {
+                    totalHourWork += e.totalHrs
+                })
+                // #end
+                // #start tạo tổng số giờ đã đăng ký nghĩ 
+                let totalHourLeave = 0
+                myStaff.listAbsent.map(e => {
+                    totalHourLeave += e.hourNum
+                })
+                //#end
+                // #start tạo lương tháng hiện tại
+                let salaryMonth = (myStaff.salaryScale * 3000000) + ((totalOvertime - (standardAmonth - totalHourWork) + totalHourLeave) * 200000)
+                // #end
+                res.render("mh_5Status", {
+                    pageTitle: "My Staff Info",
+                    path: "/manager",
+                    prod: myStaff,
+                    pro: containerMonth,
+                    totalOvertime: totalOvertime,
+                    absent: absentSign,
+                    lastInOut: lastCheck[0].items.slice(-1)[0].endtime,
+                    totalHour: totalHourWork,
+                    salary: salaryMonth
+                })
+            })
+                .catch(err => {
+                    console.log(err)
+                })
+        })
+        .catch(err => {
+            console.log(err)
+        })
+}
+// #endregion
+
+// #region GET mh_5 Manager List Check
+
+exports.getListCheck = (req, res, next) => {
+    const checkId = req.params.checkId
+
+    const page = +req.query.page || 1;
+    const ITEMS_PER_PAGE = 2;
+
+    console.log(checkId)
+    let itemsBox = []
+    CheckInOut.find({
+        userId: checkId
+    })
+        .then(empCheck => {
+            for (let emp of empCheck) {
+                for (let item of emp.items) {
+                    if (item.endtime !== undefined) {
+                        itemsBox.push(item)
+                    }
+                }
+            }
+            Employee.findById(checkId)
+                .then(myEmp => {
+                    // #start tạo function paginate
+                    function paginate(array, page_size, page_number) {
+                        return array.slice((page_number - 1) * page_size, page_number * page_size)
+                    }
+                    // #end function
+                    console.log(paginate(itemsBox, ITEMS_PER_PAGE, page))
+                    res.render("mh_5Listcheck", {
+                        pageTitle: "List Checkin-Out",
+                        path: "/checkList",
+                        prod: paginate(itemsBox, ITEMS_PER_PAGE, page),
+                        pro: myEmp,
+                        currentPage: page,
+                        hasNextPage: ITEMS_PER_PAGE * page < itemsBox.length,
+                        hasPreviousPage: page > 1,
+                        nextPage: page + 1,
+                        previousPage: page - 1,
+                        lastPage: Math.ceil(itemsBox.length / ITEMS_PER_PAGE)
+                    })
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        })
+        .catch(err => {
+            console.log(err)
+        })
+}
+// #endregion
+
+// #region POST mh_5 Manager Delete Check
+exports.postDeleteCheck = (req, res, next) => {
+    const checkId = req.body.itemId;
+    const empId = req.body.staffId;
+
+    CheckInOut.updateOne({ userId: empId }, { $pull: { items: { _id: checkId } } })
+        .then(myCheck => {
+            console.log(myCheck);
+            console.log("DESTROYED CHECK SUCCESFULLY");
+            res.redirect("/manager")
+        }).catch(err => {
+            const error = new Error(err);
+            error.httpsStatusCode = 500;
+            return next(error);
+        })
+}
+// #endregion
+
+// #region POST mh_5 Manager pick month employee
+
+exports.postPickMonth = (req, res, next) => {
+    const pickMonth = req.body.pickmonth
+    const empId = req.body.empId
+
+    console.log(empId)
+    console.log(pickMonth)
+
+    CheckInOut.find({ userId: empId })
+        .then(empcheck => {
+            let empMonthBox = []
+            for (let mont of empcheck) {
+                if (mont.month == pickMonth) {
+                    empMonthBox.push(mont)
+                } else {
+                    empMonthBox = null
+                }
+            }
+            let resultBox = []
+            if (empMonthBox == null) {
+                resultBox = null
+            } else {
+                resultBox.push(empMonthBox.filter(x => {
+                    return x.items.length != 0
+                }))
+            }
+
+            // #start lấy số phiên cuối cùng 
+            let resultLastCheck
+            if (resultBox != null) {
+                let lastCheck = resultBox[0].slice(-1)
+                resultLastCheck = lastCheck[0].items.pop() // lấy objec cuối cùng của phiên
+            } else {
+                lastCheck = null
+                resultLastCheck = null
+            }
+            // #end lấy thời gian kết thúc
+
+            // #start tạo tổng số giờ làm thêm được
+            let totalOverTime = 0
+            if (resultBox != null) {
+                resultBox[0].map(e => {
+                    totalOverTime += e.overTime
+                })
+            } else {
+                totalOverTime = null
+            }
+            //#end
+            Employee.findById(empId)
+                .then(emp => {
+                    console.log(emp)
+                    //#start total hourLeave
+                    let totalHourLeave = 0
+                    emp.listAbsent.map(e => {
+                        totalHourLeave += e.hourNum
+                    })
+                    //#end
+                    //#start total Hours Work
+                    let totalHourWork = 0
+                    if (resultBox != null) {
+                        resultBox[0].map(e => {
+                            totalHourWork += e.totalHrs
+                        })
+                    } else {
+                        totalHourWork = null
+                    }
+                    //#end
+                    //#start total Overtime
+                    let totalOverTime = 0
+                    if (resultBox != null) {
+                        resultBox[0].map(e => {
+                            totalOverTime += e.overTime
+                        })
+                    } else {
+                        totalOverTime = null
+                    }
+                    //#end
+                    //#start số giờ cần thiết làm theo ngày
+                    let standardAMonth
+                    if (resultBox != null) {
+                        standardAMonth = resultBox[0].length * 8
+                    } else {
+                        standardAMonth = null
+                    }
+                    //#end
+                    // #start tạo lương tháng hiện tại
+                    let salaryMonth = (emp.salaryScale * 3000000) + ((totalOverTime - (standardAMonth - totalHourWork) + totalHourLeave) * 200000)
+                    console.log(salaryMonth);
+                    // #end
+                    res.render("mh_5empMonth", {
+                        pageTitle: "Month of employee",
+                        path: "/managerGetMonth",
+                        thisMonth: pickMonth,
+                        prod: resultBox != null ? resultBox[0] : null,
+                        endCheck: resultLastCheck,
+                        overTime: totalOverTime,
+                        salary: salaryMonth,
+                        empId: empId
+                    })
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        })
+        .catch(err => {
+            console.log(err)
+        })
+
+}
+// #endregion
+
+//#region POST managerAproved mh_5 
+exports.postAproved = (req, res, next) => {
+    const empId = req.body.empId
+    console.log(empId);
+
+    Employee.findById(empId)
+        .then(myEmp => {
+            myEmp.isAproved = false;
+            return myEmp.save();
+        }).then((result) => {
+            console.log(result);
+            res.redirect('/manager')
+        })
+        .catch(err => {
+            console.log(err)
+        })
+}
+//#endregion
