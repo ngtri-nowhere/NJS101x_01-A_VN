@@ -163,7 +163,7 @@ app.use(errorController.get404);
 //     })
 // })
 
-app.listen(process.env.MONGODB_URI || 8080, '0.0.0.0', () => {
+app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
     console.log("Server is running");
 })
 console.log("this work");
