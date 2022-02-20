@@ -508,12 +508,12 @@ exports.searchPost = (req, res, next) => {
 
     Employee.findById(empId).then(emp => {
         // tạo pro để render . là lượt checkinnout vừa rồi
-
         // start thời gian kết thúc
         let filterEmpCheck = req.checkinout.filter(e => {
             return e.userId.toString() == emp._id.toString() && e.month == currentMonth
         })
         resultFilter = []
+
         for (let e of filterEmpCheck) {
             if (e.month == pickMonth) {
                 resultFilter.push(e)
@@ -546,21 +546,20 @@ exports.searchPost = (req, res, next) => {
                 resultprodCheck = null
             }
         }
-        console.log(resultprodCheck)
         let getStartDay
         let userStartDay
         let prodStartDay
         if (resultprodCheck !== null) {
-            getStartDay = resultprodCheck[0]
-            userStartDay = getStartDay.items[0]
+            getStartDay = resultprodCheck.filter(x => {
+                return x.items.length != 0
+            })
+            userStartDay = getStartDay[0].items[0]
             prodStartDay = userStartDay.starttime
         }
         else {
             resultprodCheck = null
         }
-
         // end
-
         // get all hourLeave in month 
         const hourLeave = (emp.listAbsent.map(i => {
             while (i.dayoff.getMonth() + 1 == pickMonth) {
@@ -577,7 +576,6 @@ exports.searchPost = (req, res, next) => {
         const totalhourLeave = xHourLeave.reduce((a, b) => {
             return a + b
         }, 0)
-
         console.log(totalhourLeave + " this is totalhourLeave")
         // ---------  total hourLeave annual in a month
         // get all overtime have in a month
@@ -659,7 +657,7 @@ exports.searchPost = (req, res, next) => {
             salary: salaryMonth,
             prodTime: checkOverTime,
             userEndTime: prodEndDay,
-
+            userStartTime: prodStartDay
         })
     }).catch(err => {
         console.log(err)
