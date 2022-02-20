@@ -20,6 +20,7 @@ exports.mh1 = (req, res, next) => {
 }
 //#endregion
 
+
 //#region GET CHECK IN
 exports.checkIn = (req, res, next) => {
     Employee.find().then(emp => {
@@ -314,9 +315,13 @@ exports.search = (req, res, next) => {
             return hoursnum += i.hourNum
         }
     }))
-    const totalhourLeave = hourLeave.reduce((a, b) => {
+    const xhourLeave = hourLeave.filter(x => {
+        return x != undefined
+    })
+    const totalhourLeave = xhourLeave.reduce((a, b) => {
         return a + b
     }, 0)
+    console.log(totalhourLeave + " hours left")
     // ---------  total hourLeave annual in a month
 
     // get all overtime have in a month
@@ -326,10 +331,13 @@ exports.search = (req, res, next) => {
             return overwork += i.overTime
         }
     }));
-    const totalOvertime = getOvertime.reduce((a, b) => {
+    const xgetOvertime = getOvertime.filter(x => {
+        return x != undefined
+    })
+    const totalOvertime = xgetOvertime.reduce((a, b) => {
         return a + b
     }, 0);
-
+    console.log(totalOvertime + "total over time");
     // -- total OverTime get by sum of all day 
 
     //get all hourworking in day
@@ -339,10 +347,14 @@ exports.search = (req, res, next) => {
             return fullHour += i.totalHrs
         }
     }))
-    const totalHourWork = getHour.reduce((a, b) => {
+    const xgetHour = getHour.filter(x => {
+        return x != undefined
+    })
+    console.log(xgetHour);
+    const totalHourWork = xgetHour.reduce((a, b) => {
         return a + b;
     }, 0)
-
+    console.log(totalHourWork + " hour working")
     // --  total hour working in month
 
     // tạo số giờ tối thiểu cần thiết trong tháng
@@ -352,13 +364,14 @@ exports.search = (req, res, next) => {
             return sorthour = req.checkinout.length * 8
         }
     }))
-    const standardAMonth = standardHour[0]
-
+    const xstandardHour = standardHour.filter(x => {
+        return x != undefined
+    })
+    const standardAMonth = xstandardHour
     //tạo salaryMonth
-    const salaryMonth = (req.emp.salaryScale * 3000000) + ((totalOvertime - (totalHourWork - standardAMonth) + totalhourLeave) * 200000)
+    const salaryMonth = (req.emp.salaryScale * 3000000) + ((totalOvertime - (standardAMonth - totalHourWork) + totalhourLeave) * 200000)
     console.log(salaryMonth)
 
-    console.log(req.emp)
     console.log(req.empCheck)
     console.log(req.checkinout.length)
 
@@ -378,20 +391,56 @@ exports.search = (req, res, next) => {
 exports.searchPost = (req, res, next) => {
     const pickMonth = req.body.pickmonth // get pick month
 
-    empCheckin = req.empCheck
-    if (empCheckin.month != pickMonth) {
-        empCheckin = null
-    } else {
-        empCheckin = empCheckin
+    // #start tạo thời gian kết thúc
+    let filterEmpCheck = req.checkinout.filter(e => {
+        return e.month == pickMonth
+    })
+    resultEmpCheck = []
+
+    for (let i of filterEmpCheck) {
+        resultEmpCheck.push(i)
     }
-    // console.log(empCheckin + "this is empCheckin")
-    prodCheck = req.checkinout
-    if (prodCheck.month != pickMonth) {
-        prodCheck = null
+    console.log(resultEmpCheck)
+
+    let getEndday;
+    let userEndDay;
+    let prodEndDay;
+    if (resultEmpCheck == null || resultEmpCheck == "") {
+        prodEndDay = null
+        resultEmpCheck = null
+        console.log(prodEndDay)
     } else {
-        prodCheck = prodCheck
+        getEndday = resultEmpCheck.slice(-1)
+        userEndDay = getEndday[0].items.slice(-1)
+        prodEndDay = userEndDay[0].endtime
     }
 
+    // #end
+    // #start tạo thời gian bắt đầu
+    prodCheck = req.checkinout.filter(pr => {
+        return pr.month == pickMonth
+    })
+    resultProdCheck = []
+    for (let p of prodCheck) {
+        if (prodCheck.length > 0 || prodCheck != null || prodCheck != undefined) {
+            resultProdCheck.push(p)
+        } else {
+            resultProdCheck = null
+        }
+    }
+    console.log(resultProdCheck)
+    let getStartDay
+    let userStartDay
+    let prodStartDay
+    if (resultProdCheck == null || resultProdCheck == "") {
+        prodStartDay = null
+    }
+    else {
+        getStartDay = resultProdCheck[0]
+        userStartDay = getStartDay.items[0]
+        prodStartDay = userStartDay.starttime
+    }
+    //# end
 
     // get all hourLeave in month 
     const hourLeave = (req.emp.listAbsent.map(i => {
@@ -403,7 +452,10 @@ exports.searchPost = (req, res, next) => {
             return hoursnum += i.hourNum
         }
     }))
-    const totalhourLeave = hourLeave.reduce((a, b) => {
+    const xhourLeave = hourLeave.filter(x => {
+        return x != undefined
+    })
+    const totalhourLeave = xhourLeave.reduce((a, b) => {
         return a + b
     }, 0)
     console.log(totalhourLeave)
@@ -419,10 +471,13 @@ exports.searchPost = (req, res, next) => {
             return overwork += i.overTime
         }
     }));
-    const totalOvertime = getOvertime.reduce((a, b) => {
+    const xgetOvertime = getOvertime.filter(x => {
+        return x != undefined
+    })
+    const totalOvertime = xgetOvertime.reduce((a, b) => {
         return a + b
     }, 0);
-    console.log(totalOvertime);
+    console.log(totalOvertime + "this is overTime");
     // -- total OverTime get by sum of all day 
 
     //get all hourworking in day
@@ -435,7 +490,10 @@ exports.searchPost = (req, res, next) => {
             return fullHour += i.totalHrs
         }
     }))
-    const totalHourWork = getHour.reduce((a, b) => {
+    const xgetHour = getHour.filter(x => {
+        return x != undefined
+    })
+    const totalHourWork = xgetHour.reduce((a, b) => {
         return a + b;
     }, 0)
     console.log(totalHourWork + "this is totalHourWork in month");
@@ -451,12 +509,15 @@ exports.searchPost = (req, res, next) => {
             return sorthour = req.checkinout.length * 8
         }
     }))
-    const standardAMonth = standardHour[0]
+    let xstandardHou = standardHour.filter(x => {
+        return x != undefined
+    })
+    const standardAMonth = xstandardHou[0]
     console.log(standardAMonth)
 
     //tạo salaryMonth
     let salaryMonth
-    salaryMonth = (req.emp.salaryScale * 3000000) + ((totalOvertime - (totalHourWork - standardAMonth) + totalhourLeave) * 200000)
+    salaryMonth = (req.emp.salaryScale * 3000000) + ((totalOvertime - (standardAMonth - totalHourWork) + totalhourLeave) * 200000)
     if (standardAMonth != NaN || standardAMonth != undefined || standardAMonth != null) {
     } else {
         salaryMonth = "Noooooooooooooooooooooooooooooo"
@@ -467,13 +528,14 @@ exports.searchPost = (req, res, next) => {
         pageTitle: "Employee Search info",
         path: "/search",
         prods: req.emp,
-        pro: empCheckin,
-        pr: prodCheck,
-        salary: salaryMonth
+        pr: resultEmpCheck,
+        salary: salaryMonth,
+        prodEnd: prodEndDay,
+        prodStart: prodStartDay,
+        overTime: totalOvertime
     })
 }
 // #endregion
-
 
 //#region GET COVID mh_4
 exports.covid = (req, res, next) => {
