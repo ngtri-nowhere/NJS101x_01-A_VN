@@ -165,7 +165,7 @@ app.use(errorController.get404);
 
 mongoose.connect(MONGODB_URI)
     .then(result => {
-        app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
+        app.listen(process.env.MONGODB_URI || 8080, '0.0.0.0', () => {
             console.log("Server is running");
         }
         )
