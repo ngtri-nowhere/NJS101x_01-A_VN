@@ -15,4 +15,11 @@ main {
     transition: 0.3s ease-in-out;
 }
 
-
+.wildCard__container {
+    border: 1px solid #ccc;
+    width: 350px;
+    height:auto;
+    border-radius:10px;
+    text-align: center;
+    margin:10px;
+}

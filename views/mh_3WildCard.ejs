@@ -1,0 +1,44 @@
+<%- include('./head.ejs') %>
+    <link rel="stylesheet" href="../css/mh_3.css">
+    </head>
+
+    <body>
+        <%- include('./navigation.ejs') %>
+            <main>
+                <div class="wildCard__hour">
+                    <h3>Số giờ cần tìm: <%= pro %> giờ
+                    </h3>
+                </div>
+                <% if(prods !=null) { %>
+                    <% for(let pr of prods) {%>
+                        <div class="wildCard__container">
+                            <h4>Ngày:
+                            </h4>
+                            <p>
+                                <%= pr.day %>
+                            </p>
+                            <h4>Tháng:
+                            </h4>
+                            <p>
+                                <%=pr.month %>
+                            </p>
+                            <h4>Overtime:
+                            </h4>
+                            <p>
+                                <%=pr.overTime %>
+                            </p>
+                            <h4>Giờ bắt đầu:</h4>
+                            <p>
+                                <%=pr.items[0].starttime %>
+                            </p>
+                            <h4>Giờ kết thúc:</h4>
+                            <p>
+                                <%= pr.items.pop().endtime %>
+                            </p>
+                        </div>
+                        <% } %>
+                            <% } else { %>
+                                Không tìm thấy
+                                <%} %>
+            </main>
+            <%- include('./end.ejs') %>

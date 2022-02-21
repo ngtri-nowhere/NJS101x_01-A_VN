@@ -49,7 +49,11 @@
                         </select>
                         <button class="btn" type="submit">Xem tháng</button>
                     </div>
-
+                </form>
+                <form method="POST" action="/wildCard">
+                    <label for="wildCard">Tìm ngày làm(nếu có) theo tổng số giờ làm: </label>
+                    <input type="text" class="wildCard" name="wildCard" id="wildCard" value="Nhập số">
+                    <button class="btn" type="submit">Tìm kiếm</button>
                 </form>
             </main>
             <%- include('./end.ejs') %>

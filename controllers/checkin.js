@@ -20,7 +20,6 @@ exports.mh1 = (req, res, next) => {
 }
 //#endregion
 
-
 //#region GET CHECK IN
 exports.checkIn = (req, res, next) => {
     Employee.find().then(emp => {
@@ -367,7 +366,8 @@ exports.search = (req, res, next) => {
     const xstandardHour = standardHour.filter(x => {
         return x != undefined
     })
-    const standardAMonth = xstandardHour
+    console.log(xstandardHour[0])
+    const standardAMonth = xstandardHour[0]
     //tạo salaryMonth
     const salaryMonth = (req.emp.salaryScale * 3000000) + ((totalOvertime - (standardAMonth - totalHourWork) + totalhourLeave) * 200000)
     console.log(salaryMonth)
@@ -536,6 +536,32 @@ exports.searchPost = (req, res, next) => {
     })
 }
 // #endregion
+
+//#region POST SEACH Wildcard Search mh_3
+exports.postWildCard = (req, res, next) => {
+    const hourWork = req.body.wildCard
+    console.log(hourWork);
+    CheckInOut.find({ totalHrs: hourWork }).then(result => {
+        let wildBox = []
+        if (result.length != 0 || result.length != "") {
+            for (let e of result) {
+                wildBox.push(e)
+            }
+        } else {
+            wildBox = null
+        }
+        console.log(wildBox);
+        res.render("mh_3WildCard", {
+            pageTitle: "Day working with totalhour work",
+            path: "/wildCard",
+            prods: wildBox,
+            pro: hourWork
+        })
+    }).catch(err => {
+        console.log(err)
+    })
+}
+//#endregion
 
 //#region GET COVID mh_4
 exports.covid = (req, res, next) => {
